@@ -1,0 +1,47 @@
+## Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+# Window decorations will be removed if set to true
+remove_decorations = true
+
+# Adds spacing between windows
+gap = 10
+
+# How much to increment the master area size.
+proportion = 0.1
+
+[keybindings]
+# key sequences can have zero or more modifiers and exactly one key.
+# example: Control-Shift-t has two modifiers and one key.
+# You can view which keys activate which modifier using the 'xmodmap' program.
+# Key symbols can be found by pressing keys using the 'xev' program
+
+# Tile the current workspace.
+tile = "Control-Shift-t"
+
+# Untile the current workspace.
+untile = "Control-Shift-u"
+
+# Make the active window as master.
+make_active_window_master = "Control-Shift-m"
+
+# Increase number of masters.
+increase_master = "Control-Shift-i"
+
+# Decrease the number of masters.
+decrease_master = "Control-Shift-d"
+
+# Cycles through the available layouts.
+switch_layout = "Control-Shift-s"
+
+# Moves focus to the next window.
+next_window = "Control-Shift-n"
+
+# Moves focus to the previous window.
+previous_window = "Control-Shift-p"
+
+# Increases the size of the master windows.
+increment_master = "Control-bracketright"
+
+# Decreases the size of the master windows.
+decrement_master = "Control-bracketleft"

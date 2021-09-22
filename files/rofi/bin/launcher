@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+# Available Styles
+# >> Created and tested on : rofi 1.6.0-1
+#
+# Blurry	Blurry_full		Kde_simplemenu		Kde_krunner		Launchpad
+# Gnome_do	Slingshot		Appdrawer			Appdrawer_alt	Appfolder
+# Column	Row				Row_center			Screen			Row_dock		Row_dropdown
+#
+# Ribbon_top		Ribbon_top_round		Ribbon_bottom	 	Ribbon_bottom_round
+# Ribbon_left		Ribbon_left_round		Ribbon_right		Ribbon_right_round
+# Full_bottom		Full_top				Full_left			Full_right
+
+## Default
+DIR="default"
+STYLE="launcher"
+
+rofi \
+	-show drun \
+	-modi run,drun,ssh \
+	-scroll-method 0 \
+	-drun-match-fields all \
+	-drun-display-format "{name}" \
+	-no-drun-show-actions \
+	-terminal alacritty \
+	-kb-cancel Alt-F1 \
+	-theme "$HOME"/.config/openbox/rofi/"$DIR"/"$STYLE".rasi

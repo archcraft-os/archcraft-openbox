@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to quickly open files and directory
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Launch terminal and type command
+launch() {
+	xdotool exec alacritty && sleep 0.5 && xdotool type "$1"
+}
+
+if [[ "$1" ]]; then
+	launch "$1"
+fi
+
+# List of directories
+dirs=('/boot/grub'
+	  '/etc/default'
+	  '/etc/fonts'
+	  '/etc/grub.d'
+	  '/etc/lightdm'
+	  '/etc/mkinitcpio.d'
+	  '/etc/pacman.d'
+	  '/etc/polkit-1'
+	  '/etc/systemd/system'
+	  '/etc/X11'
+	  '/usr/lib/initcpio'
+	  '/usr/lib/modules'
+	  '/usr/lib/systemd/system'
+	  '/usr/local/bin'
+	  '/usr/share/applications'
+	  '/usr/share/backgrounds'
+	  '/usr/share/fonts'
+	  '/usr/share/grub'
+	  '/usr/share/icons'
+	  '/usr/share/lightdm-webkit'
+	  '/usr/share/lxdm'
+	  '/usr/share/plymouth'
+	  '/usr/share/themes')
+
+# List of files
+files=('/boot/grub/grub.cfg'
+	   '/etc/default/grub'
+	   '/etc/fonts/fonts.conf'
+	   '/etc/grub.d/40_custom'
+	   '/etc/lightdm/lightdm.conf'
+	   '/etc/lightdm/lightdm-webkit2-greeter.conf'
+	   '/etc/mkinitcpio.d/linux.preset'
+	   '/etc/mkinitcpio.conf'
+	   '/etc/pacman.d/mirrorlist'
+	   '/etc/pacman.conf')
+
+# Generate menu
+menu() {
+	menuStart
+	menuSeparator 'Directories'
+	for dir in "${dirs[@]}"; do
+		menuItem "Go To : $dir" "$0 'cd $dir'"
+	done
+
+	menuSeparator 'Files'
+	for file in "${files[@]}"; do
+		menuItem "Edit : $file" "$0 'sudo geany $file'"
+	done
+
+	menuEnd
+}
+
+menu

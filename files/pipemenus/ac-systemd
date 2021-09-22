@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to perform various systemd operations
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Launch terminal and type command
+launch() {
+	xdotool exec alacritty && sleep 0.5 && xdotool type "$1"
+}
+
+if [[ "$1" ]]; then
+	launch "$1"
+fi
+
+menuStart
+menuSeparator 'Services'
+menuItem 'List units currently in memory' "$0 'systemctl list-units'"
+menuItem 'List sockets currently in memory' "$0 'systemctl list-sockets'"
+menuItem 'List timers currently in memory' "$0 'systemctl list-timers'"
+menuSeparator
+menuItem 'Check whether units are active' "$0 'systemctl is-active PATTERN'"
+menuItem 'Show runtime status of unit(s)' "$0 'systemctl status UNIT(s)'"
+menuItem 'Show properties of unit(s)' "$0 'systemctl show UNIT(s)'"
+menuSeparator
+menuItem 'Start / Activate the unit(s)' "$0 'sudo systemctl start UNIT(s)'"
+menuItem 'Stop / Deactivate the unit(s)' "$0 'sudo systemctl stop UNIT(s)'"
+menuItem 'Reload the unit(s)' "$0 'sudo systemctl reload UNIT(s)'"
+menuItem 'Restart the unit(s)' "$0 'sudo systemctl restart UNIT(s)'"
+menuEnd

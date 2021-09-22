@@ -1,0 +1,13 @@
+/* Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com> */
+/* Everyone is permitted to copy and distribute copies of this file under GNU-GPL3 */
+
+/*
+ * Change the colorscheme for every menu simply by editing this file...
+ *
+ * Available Color Schemes
+ *
+ * Adaptive | Berry | Cocoa | Default | Gotham | Nightly | Bluish | colors | Faded | Mask | Nordic |
+ *
+ */
+
+@import "Default.rasi"

@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2021 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to perform various pacman operations
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Launch terminal and type command
+launch() {
+	xdotool exec alacritty && sleep 0.5 && xdotool type "$1"
+}
+
+if [[ "$1" ]]; then
+	launch "$1"
+fi
+
+menuStart
+menuSeparator 'Database'
+menuItem 'Check Local DB Validity' "$0 'pacman -Dk'"
+menuItem 'Refresh Package Database' "$0 'sudo pacman -Syy'"
+menuSeparator 'Sync'
+menuItem 'Upgrade Packages' "$0 'sudo pacman -Syu'"
+menuItem 'Upgrade Packages (Refresh DB)' "$0 'sudo pacman -Syyu'"
+menuSeparator
+menuItem 'Install Package(s)' "$0 'sudo pacman -S PKG_NAME'"
+menuItem 'Download Package(s)' "$0 'sudo pacman -Sw PKG_NAME'"
+menuSeparator
+menuItem 'Search Package' "$0 'pacman -Ss STRING'"
+menuItem 'Package Information' "$0 'pacman -Sii PKG_NAME'"
+menuItem 'Print Package URL/Path' "$0 'pacman -Sp PKG_NAME'"
+menuItem 'List Packages In Repo' "$0 'pacman -Sl REPO_NAME'"
+menuSeparator 'Remove'
+menuItem 'Remove Package(s)' "$0 'sudo pacman -R PKG_NAME'"
+menuItem 'Remove Package(s) & Depends' "$0 'sudo pacman -Rcv PKG_NAME'"
+menuItem 'Remove Package(s) & Configs' "$0 'sudo pacman -Rnv PKG_NAME'"
+menuItem 'Purge Package(s)' "$0 'sudo pacman -Rcnsuv PKG_NAME'"
+menuSeparator
+menuItem 'Print Target Package(s)' "$0 'pacman -Rcsup PKG_NAME'"
+menuSeparator
+menuItem 'Remove Old Packages From Cache' "$0 'sudo pacman -Sc'"
+menuItem 'Clear All Package Cache' "$0 'sudo pacman -Scc'"
+menuSeparator 'Query'
+menuItem 'List All Installed Packages' "$0 'pacman -Q'"
+menuItem 'List Explicitly Installed Packages' "$0 'pacman -Qe'"
+menuItem 'List Outdated Packages' "$0 'pacman -Qu'"
+menuItem 'List Packages That Are Not In DB' "$0 'pacman -Qm'"
+menuSeparator
+menuItem 'Search Installed Package(s)' "$0 'pacman -Qs STRING'"
+menuItem 'View Package Information' "$0 'pacman -Qii PKG_NAME'"
+menuItem 'Check Package Files' "$0 'pacman -Qkk PKG_NAME'"
+menuItem 'List Files Owned Package' "$0 'pacman -Ql PKG_NAME'"
+menuItem 'Check File Owned By Package' "$0 'pacman -Qo FILE_NAME'"
+menuEnd
