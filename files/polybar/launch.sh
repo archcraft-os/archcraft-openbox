@@ -10,9 +10,9 @@ RFILE="$DIR/.system"
 
 ## Get system variable values for various modules
 get_values() {
-	CARD=$(ls /sys/class/backlight | head -n 1)
-	BATTERY=$(ls /sys/class/power_supply | grep BAT | head -n 1)
-	ADAPTER=$(ls /sys/class/power_supply | grep AC | head -n 1)
+	CARD=$(light -L | grep 'backlight' | head -n1 | cut -d'/' -f3)
+	BATTERY=$(upower -i `upower -e | grep 'BAT'` | grep 'native-path' | cut -d':' -f2 | tr -d '[:blank:]')
+	ADAPTER=$(upower -i `upower -e | grep 'AC'` | grep 'native-path' | cut -d':' -f2 | tr -d '[:blank:]')
 	INTERFACE=$(ip link | awk '/state UP/ {print $2}' | tr -d :)
 }
 

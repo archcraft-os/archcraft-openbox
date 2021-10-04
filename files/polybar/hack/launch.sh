@@ -4,16 +4,20 @@
 ## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-CARD="$(ls /sys/class/backlight | head -n 1)"
+CARD="$(light -L | grep 'backlight' | head -n1 | cut -d'/' -f3)"
+INTERFACE="$(ip link | awk '/state UP/ {print $2}' | tr -d :)"
 RFILE="$DIR/.module"
 
-# Fix backlight module for non intel machines
-backlight() {
-	if [[ "$CARD" != *"intel_"* ]]; then
-		if [[ ! -f "$RFILE" ]]; then
-			sed -i -e 's/backlight/brightness/g' "$DIR"/config.ini
-			touch "$RFILE"
-		fi
+# Fix backlight and network modules
+fix_modules() {
+	if [[ -z "$CARD" ]]; then
+		sed -i -e 's/backlight/bna/g' "$DIR"/config.ini
+	elif [[ "$CARD" != *"intel_"* ]]; then
+		sed -i -e 's/backlight/brightness/g' "$DIR"/config.ini
+	fi
+
+	if [[ "$INTERFACE" == e* ]]; then
+		sed -i -e 's/network/ethernet/g' "$DIR"/config.ini
 	fi
 }
 
@@ -31,5 +35,8 @@ launch_bar() {
 }
 
 # Execute functions
-backlight
+if [[ ! -f "$RFILE" ]]; then
+	fix_modules
+	touch "$RFILE"
+fi	
 launch_bar
