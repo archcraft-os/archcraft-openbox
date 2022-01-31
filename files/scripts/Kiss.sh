@@ -177,9 +177,12 @@ obconfig () {
 
 # dunst -------------------------------------
 change_dunst() {
-	sed -i -e "s/geometry = .*/geometry = \"$1\"/g" 	${dunst_path}/dunstrc
-	sed -i -e "s/font = .*/font = $2/g" 				${dunst_path}/dunstrc
-	sed -i -e "s/frame_width = .*/frame_width = $3/g" 	${dunst_path}/dunstrc
+	sed -i -e "s/width = .*/width = $1/g" 				${dunst_path}/dunstrc
+	sed -i -e "s/height = .*/height = $2/g" 			${dunst_path}/dunstrc
+	sed -i -e "s/offset = .*/offset = $3/g" 			${dunst_path}/dunstrc
+	sed -i -e "s/origin = .*/origin = $4/g" 			${dunst_path}/dunstrc
+	sed -i -e "s/font = .*/font = $5/g" 				${dunst_path}/dunstrc
+	sed -i -e "s/frame_width = .*/frame_width = $6/g" 	${dunst_path}/dunstrc
 
 	sed -i '/urgency_low/Q' ${dunst_path}/dunstrc
 	cat >> ${dunst_path}/dunstrc <<- _EOF_
@@ -298,7 +301,7 @@ change_appearance 'White' 'Zafiro-Dark' 'Qogirr' 'Iosevka 10'
 obconfig 'White' 'LC' 'JetBrains Mono' '10' 'menu-minimal.xml' && openbox --reconfigure
 
 # funct GEOMETRY FONT BORDER (Change colors in funct)
-change_dunst '280x50-10+50' 'JetBrains Mono 10' '0'
+change_dunst '280' '80' '10x50' 'top-right' 'JetBrains Mono 10' '0'
 
 # Paste settings in funct (PLANK)
 change_dock && cat "$HOME"/.cache/plank.conf | dconf load /net/launchpad/plank/docks/

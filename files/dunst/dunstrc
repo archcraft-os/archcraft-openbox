@@ -4,7 +4,10 @@
 [global]
 monitor = 0
 follow = mouse
-geometry = "280x50-10+48"
+width = 280
+height = 80
+origin = top-right
+offset = 10x48
 indicate_hidden = yes
 shrink = no
 separator_height = 4
