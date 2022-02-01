@@ -12,6 +12,7 @@ depends=('archcraft-skeleton')
 conflicts=()
 provides=("${pkgname}")
 options=(!strip !emptydirs)
+install="${pkgname}.install"
 
 prepare() {
 	cp -af ../files/. ${srcdir}
