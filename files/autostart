@@ -29,6 +29,9 @@ bash ~/.config/openbox/polybar/launch.sh
 ## Notification Daemon
 exec dunst &
 
+# enable num lock
+numlockx &
+
 ## Start Music Player Daemon
 exec mpd &
 
