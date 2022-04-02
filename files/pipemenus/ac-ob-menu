@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to change openbox menu style
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+config="$HOME/.config/openbox/rc.xml"
+namespace="http://openbox.org/3.4/rc"
+
+# Change menu file & reload OB
+ob_menu() {
+	xmlstarlet ed -L -N a="$namespace" -u '/a:openbox_config/a:menu/a:file' -v "$1" "$config"
+	openbox --reconfigure
+}
+
+if [[ "$1" ]]; then
+	ob_menu "$1"
+fi
+
+menuStart
+menuItem 'Simple' "$0 menu-simple.xml"
+menuItem 'Iconic' "$0 menu-icons.xml"
+menuItem 'Glyphs' "$0 menu-glyphs.xml"
+menuItem 'Minimal' "$0 menu-minimal.xml"
+menuEnd

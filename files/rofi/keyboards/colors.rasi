@@ -1,0 +1,16 @@
+/* Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com> */
+/* Everyone is permitted to copy and distribute copies of this file under GNU-GPL3 */
+
+/* Color-Scheme */
+
+* {
+    BG:    #0C0E14ff;
+    BGA:   #16181Eff;
+    FG:    #CED1CFff;
+    BDR:   #C574DDff;
+    SEL:   #C574DDff;
+    UGT:   #F37F97ff;
+	IMG:   #8600F6ff;
+	ON:    #5ADECDff;
+	OFF:   #F37F97ff;
+}

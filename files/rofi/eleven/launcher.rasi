@@ -1,0 +1,155 @@
+/* Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com> */
+/* Everyone is permitted to copy and distribute copies of this file under GNU-GPL3 */
+
+configuration {
+    show-icons:                     true;
+    display-drun: 					"";
+    drun-display-format:            "{icon} {name}";
+    disable-history:                false;
+	click-to-exit: 					true;
+    location:                       6;
+}
+
+@import "font.rasi"
+@import "colors.rasi"
+
+window {
+    transparency:                   "real";
+    background-color:               @BG;
+    text-color:                     @FG;
+    border:                  		0px;
+    border-color:                  	@BGA;
+    border-radius:                  8px;
+    width:                          680px;
+    x-offset:                       0;
+    y-offset:                       -60px;
+}
+
+prompt {
+    enabled: 						true;
+	padding: 						0px;
+	background-color: 				@BG;
+	text-color: 					@IMG;
+}
+
+textbox-prompt-colon {
+	expand: 						false;
+	str: 							"";
+    border:                  		0px 0px 2px 0px;
+    border-color:                  	@SEL;
+    border-radius:                  0px;
+    background-color:               @BGA;
+    text-color:                     @IMG;
+    padding:                        10px 0px 10px 12px;
+	font:							"Iosevka Nerd Font 10";
+}
+
+entry {
+    background-color:               @BGA;
+    text-color:                     @IMG;
+    placeholder-color:              @IMG;
+    expand:                         true;
+    horizontal-align:               0;
+    placeholder:                    "Type here to search";
+    blink:                          true;
+    border:                  		0px 0px 2px 0px;
+    border-color:                  	@SEL;
+    border-radius:                  0px;
+    padding:                        10px;
+}
+
+inputbar {
+	children: 						[ textbox-prompt-colon, entry ];
+    spacing:                        0px;
+    background-color:               @BGA;
+    text-color:                     @FG;
+    expand:                         false;
+    border:                  		1px 1px 0px 1px;
+    border-radius:                  4px;
+    border-color:                  	@BDR;
+    margin:                         0px 0px 0px 0px;
+    padding:                        0px;
+    position:                       center;
+}
+
+case-indicator {
+    background-color:               @BG;
+    text-color:                     @FG;
+    spacing:                        0;
+}
+
+
+listview {
+    background-color:               #00000000;
+    columns:                        6;
+    lines:							6;
+    spacing:                        4px;
+    cycle:                          false;
+    dynamic:                        true;
+    layout:                         vertical;
+}
+
+mainbox {
+    background-color:               @BG;
+    children:                       [ inputbar, listview ];
+    spacing:                       	40px;
+    padding:                        35px;
+}
+
+element {
+    background-color:               #00000000;
+    text-color:                     @FG;
+    orientation:                    vertical;
+    border-radius:                  4px;
+    padding:                        20px;
+}
+
+element-icon {
+    background-color: 				inherit;
+    text-color:       				inherit;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    size:                           40px;
+    border:                         0px;
+}
+
+element-text {
+    background-color: 				inherit;
+    text-color:       				inherit;
+	font:							"Noto Sans 8";
+    expand:                         true;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    margin:                         0px;
+}
+
+element normal.urgent,
+element alternate.urgent {
+    background-color:               @UGT;
+    text-color:                     @FG;
+    border-radius:                  9px;
+}
+
+element normal.active,
+element alternate.active {
+    background-color:               @BGA;
+    text-color:                     @FG;
+}
+
+element selected {
+    background-color:               @BGA;
+    text-color:                     @FG;
+    border:                  		1px;
+    border-radius:                  4px;
+    border-color:                  	@BDR;
+}
+
+element selected.urgent {
+    background-color:               @UGT;
+    text-color:                     @FG;
+}
+
+element selected.active {
+    background-color:               @BGA;
+    color:                          @FG;
+}

@@ -1,0 +1,255 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu For Picom Compositor
+
+# User's config dir
+dir="$HOME/.config/"
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+readonly EXECXCOMP='picom'
+readonly RESTART_ATTEMPTS=20
+readonly HELP='
+ac-compositor an openbox pipe menu for use with picom
+It should normally be called from an openbox menu.
+
+Options (passed from the menu):
+    -h --help   show this message
+    --start     start the compositor and restart tint2, if running
+    --restart   restart the compositor, if running
+    --stop      stop the compositor
+    --edit      open the picom config file in a text editor
+    --watch     restart picom when the config is modified (useful for debugging)
+
+If ac-compositor is called with no options (the usual method),
+it will output an xml openbox pipemenu for handling compositing.
+
+See ~/.config/picom.conf and "man picom" for configuration options.'
+
+for i in "$@"; do
+    case "$i" in
+        -h|--help) echo "$HELP" ; exit 0
+    esac
+done
+
+declareDependencies picom
+
+##-- various checks ---------------------
+check_backend=$(cat $dir/picom.conf | grep "backend = " | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:],"')
+check_corners=$(cat $dir/picom.conf | grep 'corner-radius =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
+check_border=$(cat $dir/picom.conf | grep 'round-borders =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
+check_shadow=$(cat $dir/picom.conf | grep 'shadow =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
+check_fading=$(cat $dir/picom.conf | grep 'fading =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
+check_blur=$(cat $dir/picom.conf | grep 'method =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:],"')
+
+## Kill picom
+forcekill_picom() {
+    killall -q picom
+    for ((i=0; i<RESTART_ATTEMPTS; i++)); do
+        [[ $(pidof picom) ]] || break
+        killall -q -S KILL picom
+        sleep 0.25
+    done
+}
+
+##-- Edit config ---------------------
+if [[ $1 = '--edit' ]]; then # Edit picom settings
+    if ! [ -e "$HOME/.config/picom.conf" ]; then
+        cp '/etc/skel/.config/picom.conf' "$HOME/.config/picom.conf"
+    fi
+    if hash exo-open &>/dev/null; then
+        exo-open "$HOME/.config/picom.conf"
+    else
+        geany "$HOME/.config/picom.conf"
+    fi
+
+elif [[ $1 = '--start' ]]; then
+    if ! [[ $(pidof picom) ]]; then
+        $EXECXCOMP
+    else
+        echo "$0 --start: picom already running" && exit 1
+    fi
+
+elif [[ $1 = '--stop' ]]; then
+    forcekill_picom
+
+elif [[ $1 = '--restart' ]]; then
+    if [[ $(pidof picom) ]]; then
+        forcekill_picom
+        "$0" --start
+    else # nothing to restart
+        echo "$0 --restart: picom is not running" && exit 1
+    fi
+
+elif [[ $1 = '--watch' ]]; then
+    while inotifywait -e close_write "$HOME/.config/picom.conf"; do
+        "$0" --restart
+    done
+
+##-- backend ------------------
+
+elif [[ $1 = '--use-glx' ]]; then
+	sed -i -e "s/backend = .*/backend = \"glx\";/g" $dir/picom.conf
+
+elif [[ $1 = '--use-xrender' ]]; then
+	sed -i -e "s/backend = .*/backend = \"xrender\";/g" $dir/picom.conf
+
+##-- corners ---------------------
+
+elif [[ $1 = '--corner-radius' ]]; then
+	cradius=$(yad --borders=10 --width='300' --title='Corner Radius' --button=Cancel:1 --button=Okay:0  --scale --value=6 --min-value=0 --max-value=40)
+	if [[ "$cradius" ]]; then
+		sed -i -e "s/backend = .*/backend = \"glx\";/g" $dir/picom.conf
+		sed -i -e "s/corner-radius = .*/corner-radius = $cradius;/g" $dir/picom.conf
+    fi
+
+elif [[ $1 = '--disable-corners' ]]; then
+    sed -i -e "s/corner-radius = .*/corner-radius = 0;/g" $dir/picom.conf	
+
+##-- borders ---------------------
+
+elif [[ $1 = '--border-size' ]]; then
+	cborder=$(yad --borders=10 --width='300' --title='Border Size' --button=Cancel:1 --button=Okay:0  --scale --value=4 --min-value=0 --max-value=100)
+	if [[ "$cborder" ]]; then
+		sed -i -e "s/round-borders = .*/round-borders = $cborder;/g" $dir/picom.conf
+    fi
+
+elif [[ $1 = '--disable-borders' ]]; then
+    sed -i -e "s/round-borders = .*/round-borders = 0;/g" $dir/picom.conf	
+
+##-- shadows ---------------------
+
+elif [[ $1 = '--update-shadows' ]]; then
+	get_shadows=$(yad --borders=10 --width='350' --height='200' --title='Client Shadows' --button=Cancel:1 --button=Okay:0 --form --field="Radius:NUM" 14\!0..50\!1 --field="Opacity:NUM" 0.30\!0..1\!0.1\!2  --field="X-Offset:NUM" 12\!-30..30\!1 --field="Y-Offset:NUM" 12\!-30..30\!1)
+	shadow_r=$(echo $get_shadows | cut -d'|' -f1)
+	shadow_o=$(echo $get_shadows | cut -d'|' -f2)
+	shadow_x=$(echo $get_shadows | cut -d'|' -f3)
+	shadow_y=$(echo $get_shadows | cut -d'|' -f4)
+	if [[ "$get_shadows" ]]; then
+		sed -i -e "s/shadow-radius = .*/shadow-radius = $shadow_r;/g" $dir/picom.conf
+		sed -i -e "s/shadow-opacity = .*/shadow-opacity = $shadow_o;/g" $dir/picom.conf
+		sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = $shadow_x;/g" $dir/picom.conf
+		sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = $shadow_y;/g" $dir/picom.conf
+	fi
+
+elif [[ $1 = '--disable-shadows' ]]; then
+    sed -i -e "s/shadow = .*/shadow = false;/g" $dir/picom.conf	
+
+elif [[ $1 = '--enable-shadows' ]]; then
+    sed -i -e "s/shadow = .*/shadow = true;/g" $dir/picom.conf	
+
+elif [[ $1 = '--reset-shadows' ]]; then
+	sed -i -e "s/shadow-radius = .*/shadow-radius = 14;/g" $dir/picom.conf
+	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.30;/g" $dir/picom.conf
+	sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = -12;/g" $dir/picom.conf
+	sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = -12;/g" $dir/picom.conf
+
+##-- fading ---------------------
+
+elif [[ $1 = '--update-fading' ]]; then
+	get_fading=$(yad --borders=10 --width='350' --height='160' --title='Fading' --button=Cancel:1 --button=Okay:0 --form --field="Fade-in-step:NUM" 0.03\!0.01..1\!0.01\!2 --field="Fade-out-step:NUM" 0.03\!0.01..1\!0.01\!2 --field="Fade-delta:NUM" 5\!0..10\!1)
+	fading_in=$(echo $get_fading | cut -d'|' -f1)
+	fading_out=$(echo $get_fading | cut -d'|' -f2)
+	fading_delta=$(echo $get_fading | cut -d'|' -f3)
+	if [[ "$get_fading" ]]; then
+		sed -i -e "s/fade-in-step = .*/fade-in-step = $fading_in;/g" $dir/picom.conf
+		sed -i -e "s/fade-out-step = .*/fade-out-step = $fading_out;/g" $dir/picom.conf
+		sed -i -e "s/fade-delta = .*/fade-delta = $fading_delta;/g" $dir/picom.conf
+	fi
+
+elif [[ $1 = '--disable-fading' ]]; then
+    sed -i -e "s/fading = .*/fading = false;/g" $dir/picom.conf	
+
+elif [[ $1 = '--enable-fading' ]]; then
+    sed -i -e "s/fading = .*/fading = true;/g" $dir/picom.conf	
+
+elif [[ $1 = '--reset-fading' ]]; then
+	sed -i -e "s/fade-in-step = .*/fade-in-step = 0.03;/g" $dir/picom.conf
+	sed -i -e "s/fade-out-step = .*/fade-out-step = 0.03;/g" $dir/picom.conf
+	sed -i -e "s/fade-delta = .*/fade-delta = 5;/g" $dir/picom.conf
+
+##-- blur ---------------------
+
+elif [[ $1 = '--enable-blur' ]]; then
+	sed -i -e "s/backend = .*/backend = \"glx\";/g" $dir/picom.conf
+	sed -i -e "s/method = .*/method = \"dual_kawase\";/g" $dir/picom.conf
+	sed -i -e "s/strength = .*/strength = 7;/g" $dir/picom.conf
+
+elif [[ $1 = '--disable-blur' ]]; then
+	sed -i -e "s/method = .*/method = \"none\";/g" $dir/picom.conf
+	sed -i -e "s/strength = .*/strength = 0;/g" $dir/picom.conf
+
+elif [[ $1 = '--update-blur' ]]; then
+	bstrength=$(yad --borders=10 --width='300' --title='Blur Strength' --button=Cancel:1 --button=Okay:0  --scale --value=7 --min-value=1 --max-value=20)
+	if [[ "$bstrength" ]]; then
+		sed -i -e "s/strength = .*/strength = $bstrength;/g" $dir/picom.conf
+	fi
+
+##-- menu ---------------------
+
+else
+    menuStart
+    if ! [[ $(pidof picom) ]]; then
+        menuItem 'Enable Compositor' "$0 --start"
+    else
+        menuSeparator 'Backend'
+		if [[ "$check_backend" != "glx" ]]; then
+			menuItem "Use 'glx' backend" "$0 --use-glx"
+		else
+			menuItem "Use 'xrender' backend" "$0 --use-xrender"
+		fi
+        menuSeparator 'Corners'
+		if [[ "$check_corners" != "0" ]]; then
+			menuItem 'Change Corner Radius' "$0 --corner-radius"
+			menuItem 'Disable Rounded Corners' "$0 --disable-corners"
+		else
+			menuItem 'Enable Rounded Corners' "$0 --corner-radius"
+		fi
+        menuSeparator 'Border'
+		if [[ "$check_border" != "0" ]]; then
+			menuItem 'Change Border Size' "$0 --border-size"
+			menuItem 'Disable Borders' "$0 --disable-borders"
+		else
+			menuItem 'Enable Borders' "$0 --border-size"
+		fi
+        menuSeparator 'Shadow'
+		if [[ "$check_shadow" == "true" ]]; then
+			menuItem 'Modify Shadow Settings' "$0 --update-shadows"
+			menuItem 'Reset Shadow Settings' "$0 --reset-shadows"
+			menuItem 'Disable Client Shadows' "$0 --disable-shadows"
+		else
+			menuItem 'Enable Client Shadows' "$0 --enable-shadows"
+		fi
+        menuSeparator 'Fading'
+		if [[ "$check_fading" == "true" ]]; then
+			menuItem 'Modify Fading Settings' "$0 --update-fading"
+			menuItem 'Reset Fading Settings' "$0 --reset-fading"
+			menuItem 'Disable Fading' "$0 --disable-fading"
+		else
+			menuItem 'Enable Fading' "$0 --enable-fading"
+		fi
+        menuSeparator 'Blur'
+		if [[ "$check_blur" != "dual_kawase" ]]; then
+			menuItem 'Enable Blur Effect' "$0 --enable-blur"
+		else
+			menuItem 'Set Blur Strength' "$0 --update-blur"
+			menuItem 'Disable Blur Effect' "$0 --disable-blur"
+		fi
+        menuSeparator 'Settings'
+        menuItem 'Restart Compositor' "$0 --restart"
+        menuItem 'Disable Compositor' "$0 --stop"
+    fi
+	menuSeparator
+    menuItem 'Edit Configuration File' "$0 --edit"
+    menuEnd
+fi
+
+exit 0

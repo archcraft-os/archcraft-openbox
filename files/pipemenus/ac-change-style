@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to change openbox styles
+
+# Dir
+dir="$HOME/.config/openbox/scripts"
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Styles
+styles=(`ls -p --hide={Default.sh,"*-Bitmap.sh"} $dir`)
+bitmap=(`cd $dir && ls *-Bitmap.sh`)
+
+gen_menu () {
+    local count=1
+    local bcount=1
+
+	menuStart
+	menuItem "Default" "bash $dir/Default.sh"
+	menuSeparator "| Simple |"
+	for style in "${styles[@]}"; do
+		menuItem "${count}. ${style%.*}" "bash $dir/$style"
+		count=$(($count+1))
+	done
+	menuSeparator "| Bitmap |"
+	for bmap in "${bitmap[@]}"; do
+		menuItem "${bcount}. ${bmap%-*}" "bash $dir/$bmap"
+		bcount=$(($bcount+1))
+	done
+	menuEnd
+}
+
+{ gen_menu; exit 0; }

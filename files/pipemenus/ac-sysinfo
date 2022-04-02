@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Openbox Pipemenu to display system stats/info
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+##-- OS ------------------------
+os=`uname -o`
+
+##-- DISTRO ------------------------
+distro=`cat /etc/os-release | grep NAME= | head -n1 | cut -d'=' -f2 | tr -d \"`
+
+##-- KERNEL ------------------------
+kernel=`uname -sr`
+
+##-- MACHINE ------------------------
+machine=`uname -m`
+
+##-- CPU ------------------------
+cpu=`cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2 | uniq`
+
+##-- MEMORY ------------------------
+m_total="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f2`MB"
+m_used="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f3`MB"
+m_free="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f4`MB"
+
+##-- SWAP ------------------------
+s_total="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f2`MB"
+s_used="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f3`MB"
+s_free="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f4`MB"
+swappiness="`cat /proc/sys/vm/swappiness`%"
+
+##-- INIT ------------------------
+init=`cat /proc/1/comm`
+
+##-- BATTERY ------------------------
+b_stat=`acpi -b | grep Battery | cut -d' ' -f3 | tr -d ,`
+b_perc=`acpi -b | grep Battery | cut -d' ' -f4 | tr -d ,`
+b_cap=`acpi -i | tail -n1 | cut -d'=' -f2 | tr -d "[:blank:]"`
+
+##-- BACKLIGHT ------------------------
+g_card=`ls /sys/class/backlight | head -n1`
+b_value=`cat /sys/class/backlight/$g_card/brightness`
+backlight="$(($b_value*100/255))%"
+
+##-- UPTIME ------------------------
+uptime=`uptime -p | awk '{print $2 " " $3 " " $4 " " $5}'`
+
+##-- LOAD ------------------------
+load=`cat /proc/loadavg`
+
+##-- WIFI ------------------------
+interface=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f1`
+type=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f2`
+status=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f3`
+ssid=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f4`
+
+##-- MENU ------------------------
+
+menuStart
+menuSeparator " $USER@$HOSTNAME  |   `date +'%I:%M %p, %b %d %G'`"
+menuItem "  OS         :  $distro ∙ $os ∙ $machine" 'echo'
+menuItem "  KERNEL     :  $kernel" 'echo'
+menuItem "  CPU        : $cpu" 'echo'
+menuItem "  MEMORY     :  $m_used ∙ $m_free ∙ $m_total" 'echo'
+menuItem "  SWAP       :  $s_used ∙ $s_free ∙ $s_total ∙ $swappiness" 'echo'
+menuItem "  INIT       :  $init" 'echo'
+menuItem "  BATTERY    :  $b_perc ∙ $b_stat ∙ Capacity, $b_cap" 'echo'
+menuItem "  BACKLIGHT  :  $backlight" 'echo'
+menuItem "  UPTIME     :  $uptime" 'echo'
+menuItem "  LOAD       :  $load" 'echo'
+menuItem "  WIFI       :  $interface ∙ $status ∙ $ssid" 'echo'
+menuEnd

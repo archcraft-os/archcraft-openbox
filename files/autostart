@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
+
+## Kill if already running
+killall -9 xfsettingsd picom polybar mpd dunst ksuperkey xfce4-power-manager
+
+## Restore Wallpaper
+nitrogen --restore
+
+## xfce4-settings daemon
+xfsettingsd &
+
+## polkit agent
+if [[ ! `pidof xfce-polkit` ]]; then
+	/usr/lib/xfce-polkit/xfce-polkit &
+fi
+
+## Enable power management
+xfce4-power-manager &
+
+## Start Compositing Manager
+exec picom &
+
+## Launch Polybar
+bash ~/.config/openbox/polybar/launch.sh
+
+## Notification Daemon
+exec dunst &
+
+## Start Music Player Daemon
+exec mpd &
+
+## Launch Plank
+exec plank &
+
+## Thunar Daemon
+exec thunar --daemon &
+
+## Enable Super Keys For Menu
+ksuperkey -e 'Super_L=Alt_L|F1' &
+ksuperkey -e 'Super_R=Alt_L|F1' &
+
+## Welcome-App-Run-Once
+archcraft-welcome &
+sed -i -e '/## Welcome-App-Run-Once/Q' "$HOME"/.config/openbox/autostart

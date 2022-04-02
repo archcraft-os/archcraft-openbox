@@ -1,0 +1,5 @@
+post_install() {
+	echo '*************************'
+	echo -e "\n[*] Configurations for Openbox is updated.\nPlease copy the new config files manually from '/etc/skel/.config' before you login into openbox.\n"
+	echo '*************************'
+}

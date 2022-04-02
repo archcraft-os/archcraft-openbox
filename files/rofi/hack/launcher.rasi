@@ -1,0 +1,175 @@
+/* Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com> */
+/* Everyone is permitted to copy and distribute copies of this file under GNU-GPL3 */
+
+configuration {
+    fixed-num-lines: 				true;
+    show-icons: 					false;
+    sidebar-mode: 					true;
+    scroll-method: 					1;
+    window-format: 					"[{w}] ··· {c} ···   {t}";
+    click-to-exit: 					true;
+    combi-hide-mode-prefix: 		false;
+    display-window: 				"WINDOWS";
+    display-windowcd: 				"";
+    display-run: 					" RUN";
+    display-ssh: 					" SSH";
+    display-drun: 					" APPS";
+    display-combi: 					"";
+}
+
+@import "font.rasi"
+@import "colors.rasi"
+
+* {
+    background-color:             	@BG;
+}
+
+window {
+    border: 						1px;
+    border-color: 					@BDR;
+    border-radius: 					0px;
+    width: 							600px;
+    height: 						0px;
+}
+
+prompt {
+    spacing: 						0;
+    border: 						0;
+    text-color: 					@FG;
+}
+
+textbox-prompt-colon {
+    expand: 						false;
+    str: 							" ::";
+    margin:							0px 8px 0px 0px;
+    text-color: 					inherit;
+}
+
+entry {
+    spacing:    					0;
+    text-color: 					@FG;
+}
+
+case-indicator {
+    spacing:    					0;
+    text-color: 					@FG;
+}
+
+inputbar {
+    spacing:    					0px;
+    text-color: 					@FG;
+    border: 						1px;
+    border-color: 					@BDR;
+    border-radius: 					0px;
+    padding:    					6px 10px 6px 10px;
+    children: 						[ prompt,textbox-prompt-colon,entry,case-indicator ];
+}
+
+mainbox {
+    border: 						0px;
+    border-color: 					@BDR;
+    spacing: 						6px;
+    padding: 						10px;
+}
+
+listview {
+    lines:							8;
+    columns:						2;
+    fixed-height: 					0;
+    border: 						0px;
+    border-color: 					@FG;
+    spacing: 						2px;
+    scrollbar: 						false;
+    padding: 						4px 0px 0px;
+}
+
+element-text, element-icon {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+element {
+    border: 						0px;
+    padding: 						6px;
+}
+element normal.normal {
+    background-color: 				@BG;
+    text-color:       				@FG;
+}
+element normal.urgent {
+    background-color: 				@BG;
+    text-color:       				@red;
+}
+element normal.active {
+    background-color: 				@BG;
+    text-color:       				@green;
+}
+element selected.normal {
+    background-color: 				@BG;
+    text-color:       				@SEL;
+    border: 						1px;
+    border-color: 					@SEL;
+}
+element selected.urgent {
+    background-color: 				@BG;
+    text-color:       				@red;
+}
+element selected.active {
+    background-color: 				@BG;
+    text-color:       				@SEL;
+}
+element alternate.normal {
+    background-color: 				@BG;
+    text-color:       				@FG;
+}
+element alternate.urgent {
+    background-color: 				@BG;
+    text-color:       				@FG;
+}
+element alternate.active {
+    background-color: 				@BG;
+    text-color:       				@FG;
+}
+
+sidebar {
+    border:       					0px;
+    border-color: 					@SEL;
+    border-radius: 					0px;
+}
+
+button {
+    margin: 						5px 0px 0px 0px;
+    padding: 						5px;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    text-color: 					@FG;
+    border: 						0px;
+    border-radius: 					0px;
+    border-color: 					@BDR;
+}
+
+button selected {
+    background-color:             	@SEL;
+    text-color: 					@BG;
+    border: 						0px;
+    border-radius: 					0px;
+    border-color: 					@BDR;
+}
+
+scrollbar {
+    width:        					4px;
+    border:       					0px;
+    handle-color: 					@FG;
+    handle-width: 					8px;
+    padding:      					0;
+}
+
+message {
+    border: 						0px;
+    border-color: 					@SEL;
+    padding: 						1px;
+}
+
+textbox {
+    text-color: 					@FG;
+}
