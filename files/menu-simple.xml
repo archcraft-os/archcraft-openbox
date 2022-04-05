@@ -115,9 +115,6 @@
 			<separator/>
 			<menu id="StylePipeMenu" execute="&pipes;/ac-change-style" label="Change Style"/>
 			<menu id="FontPipeMenu" execute="&pipes;/ac-change-fonts" label="Change Font"/>
-			<menu id="LauncherPipeMenu" execute="&pipes;/ac-change-launcher" label="Change Launcher"/>
-			<menu id="PmenuPipeMenu" execute="&pipes;/ac-change-powermenu" label="Change Powermenu"/>
-			<menu id="PolybarPipeMenu" execute="&pipes;/ac-change-polybar" label="Change Polybar Theme"/>
 			<menu id="SchemePipeMenu" execute="&pipes;/ac-change-scheme" label="Terminal Color Scheme"/>
 			<separator/>
 			<item label="Change Wallpaper">
