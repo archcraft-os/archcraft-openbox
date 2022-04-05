@@ -523,11 +523,6 @@
         <command>~/.config/openbox/rofi/bin/screenshot</command>
       </action>
     </keybind>
-    <keybind key="W-i">
-      <action name="Execute">
-        <command>~/.config/openbox/rofi/bin/network</command>
-      </action>
-    </keybind>
     <keybind key="W-r">
       <action name="Execute">
         <command>~/.config/openbox/rofi/bin/runner</command>
