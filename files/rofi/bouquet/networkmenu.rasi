@@ -20,6 +20,7 @@ window {
     border-color:                  	@BDR;
     border-radius:                  16px;
     width:                          350px;
+    height:                         370px;
     location:                       center;
     anchor:                         center;
     x-offset:                       0;

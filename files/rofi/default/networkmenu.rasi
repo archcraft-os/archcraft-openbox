@@ -18,6 +18,7 @@ window {
     text-color:                     @FG;
     border-radius:                  10px;
     width:                          400px;
+    height:                         420px;
     location:                       center;
     anchor:                         center;
     x-offset:                       0;
