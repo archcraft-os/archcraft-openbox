@@ -175,12 +175,14 @@ obconfig () {
 
 # dunst -------------------------------------
 change_dunst() {
-	sed -i -e "s/width = .*/width = $1/g" 				${dunst_path}/dunstrc
-	sed -i -e "s/height = .*/height = $2/g" 			${dunst_path}/dunstrc
-	sed -i -e "s/offset = .*/offset = $3/g" 			${dunst_path}/dunstrc
-	sed -i -e "s/origin = .*/origin = $4/g" 			${dunst_path}/dunstrc
-	sed -i -e "s/font = .*/font = $5/g" 				${dunst_path}/dunstrc
-	sed -i -e "s/frame_width = .*/frame_width = $6/g" 	${dunst_path}/dunstrc
+	sed -i -e "s/width = .*/width = $1/g" 						${dunst_path}/dunstrc
+	sed -i -e "s/height = .*/height = $2/g" 					${dunst_path}/dunstrc
+	sed -i -e "s/offset = .*/offset = $3/g" 					${dunst_path}/dunstrc
+	sed -i -e "s/origin = .*/origin = $4/g" 					${dunst_path}/dunstrc
+	sed -i -e "s/font = .*/font = $5/g" 						${dunst_path}/dunstrc
+	sed -i -e "s/frame_width = .*/frame_width = $6/g" 			${dunst_path}/dunstrc
+	sed -i -e "s/separator_height = .*/separator_height = 4/g" 	${dunst_path}/dunstrc
+	sed -i -e "s/line_height = .*/line_height = 4/g" 			${dunst_path}/dunstrc
 
 	sed -i '/urgency_low/Q' ${dunst_path}/dunstrc
 	cat >> ${dunst_path}/dunstrc <<- _EOF_
