@@ -19,7 +19,7 @@ window {
     text-color:                     @FG;
     border-radius:                  0px;
     width:                          350px;
-    height:                         370px;
+    height:                         345px;
     x-offset:                       -10;
     y-offset:                       46;
 }

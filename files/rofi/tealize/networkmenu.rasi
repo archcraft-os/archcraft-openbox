@@ -21,7 +21,7 @@ window {
     border-color:                  	@BGA;
     border-radius:                  0px;
     width:                          350px;
-    height:                         370px;
+    height:                         385px;
     x-offset:                       -10;
     y-offset:                       46;
 }
