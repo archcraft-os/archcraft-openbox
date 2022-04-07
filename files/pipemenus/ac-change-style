@@ -7,6 +7,7 @@
 
 # Dir
 dir="$HOME/.config/openbox/scripts"
+picom_file="$HOME/.config/picom.conf"
 
 # Variables and functions
 MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
@@ -19,6 +20,27 @@ fi
 styles=(`ls -p --hide={Default.sh,"*-Bitmap.sh"} $dir`)
 bitmap=(`cd $dir && ls *-Bitmap.sh`)
 
+# Effects
+if [[ "$1" == '--effects-on' ]]; then
+	sed -i "/compositor 'glx'/s/^#//" ${dir}/*.sh
+elif [[ "$1" == '--effects-off' ]]; then
+	sed -i "s/compositor 'glx'/#compositor 'glx'/g" ${dir}/*.sh
+
+	# Apply default settings
+	sed -i -e "s/backend = .*/backend = \"xrender\";/g" 			${picom_file}
+	sed -i -e "s/corner-radius = .*/corner-radius = 6;/g" 			${picom_file}	
+
+	sed -i -e "s/shadow-radius = .*/shadow-radius = 14;/g" 			${picom_file}
+	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.30;/g" 		${picom_file}
+	sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = -12;/g" 	${picom_file}
+	sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = -12;/g" 	${picom_file}
+
+	sed -i -e "s/backend = .*/backend = \"xrender\";/g" 			${picom_file}
+	sed -i -e "s/method = .*/method = \"none\";/g" 					${picom_file}
+	sed -i -e "s/strength = .*/strength = 0;/g" 					${picom_file}
+fi
+
+# Generate menu
 gen_menu () {
     local count=1
     local bcount=1
@@ -35,6 +57,15 @@ gen_menu () {
 		menuItem "${bcount}. ${bmap%-*}" "bash $dir/$bmap"
 		bcount=$(($bcount+1))
 	done
+	menuSeparator "| Effects |"
+	for st in "${styles[@]}"; do
+		cat $dir/${st} | tail -n2 | grep -i "#compositor 'glx'" &>/dev/null
+	done
+	if [[ "$?" == 0 ]]; then
+		menuItem "Enable Auto Effects" "$0 --effects-on"
+	else
+		menuItem "Disable Auto Effects" "$0 --effects-off"		
+	fi
 	menuEnd
 }
 
