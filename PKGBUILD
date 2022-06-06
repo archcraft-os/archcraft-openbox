@@ -2,7 +2,7 @@
 
 pkgname=archcraft-openbox
 pkgver=1.0
-pkgrel=8
+pkgrel=9
 pkgdesc="Openbox WM Configurations for Archcraft"
 url="https://github.com/archcraft-os/archcraft-openbox"
 arch=('any')
