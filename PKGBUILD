@@ -1,8 +1,8 @@
 # Maintainer: Aditya Shakya <adi1090x@gmail.com>
 
 pkgname=archcraft-openbox
-pkgver=1.0
-pkgrel=9
+pkgver=2.0
+pkgrel=0
 pkgdesc="Openbox WM Configurations for Archcraft"
 url="https://github.com/archcraft-os/archcraft-openbox"
 arch=('any')
@@ -11,17 +11,13 @@ makedepends=()
 depends=('openbox' 'obconf'
 		'obmenu-generator' 'perl-linux-desktopfiles'
 		'xfce4-settings' 'xfce4-power-manager' 'xfce4-terminal'
-		'nitrogen' 'plank'
-		'archcraft-skeleton'
-		'alacritty' 'thunar' 'geany'
+		'nitrogen' 'alacritty' 'thunar' 'geany'
 		'rofi' 'polybar' 'dunst'
 		'mpd' 'mpc' 'ffmpeg'
 		'maim' 'xclip' 'viewnior'
 		'ksuperkey' 
 		'betterlockscreen'
 		'networkmanager-dmenu-git'
-		'picom-ibhagwan-git' 
-		'xfce-polkit' 
 		'xorg-xsetroot'
 		'xmlstarlet'
 		'yad'

@@ -1,5 +1,64 @@
+## User info
+_user=`echo ${SUDO_USER:-$(whoami)}`
+_gid=`echo ${SUDO_GID}`
+_group=`cat /etc/group | grep ${_gid} | cut -d: -f1 | head -1`
+_dir="/home/${_user}/.config"
+
+## Packages specific
+_wmpkg='openbox'
+_wmname='Openbox'
+
+## Colors
+RED="$(printf '\033[31m')"  GREEN="$(printf '\033[32m')"  YELLOW="$(printf '\033[33m')"  BLUE="$(printf '\033[34m')"
+MAGENTA="$(printf '\033[35m')"  CYAN="$(printf '\033[36m')"  WHITE="$(printf '\033[37m')" BLACK="$(printf '\033[30m')"
+
+## Reset terminal colors
+reset_color() {
+	tput sgr0   # reset attributes
+	tput op     # reset color
+	return
+}
+
+## Install Config files
+install_wm() {
+	echo -e ${BLUE}"\n[*] Copying ${_wmname} config files into ${_dir}..." && reset_color
+	mkdir -p ${_dir}/${_wmpkg}
+	cp -rf /etc/skel/.config/${_wmpkg}/* ${_dir}/${_wmpkg}/
+	chown -R ${_user}:${_group} ${_dir}/${_wmpkg}
+	if [[ -d "${_dir}/${_wmpkg}" ]]; then
+		echo -e ${GREEN}"[*] Configuration files installed successfully!" && reset_color
+	else
+		echo -e ${RED}"[*] Failed to install configuration files!" && reset_color
+	fi
+}
+
+## Backup previous files
+backup_wm() {
+	echo -e ${MAGENTA}"\n[*] Creating a backup of your current ${_wmname} config..." && reset_color
+	BNAME="`echo $RANDOM`"
+	mv ${_dir}/${_wmpkg} ${_dir}/${_wmpkg}_backup_${BNAME}
+	chown -R ${_user}:${_group} ${_dir}/${_wmpkg}_backup_${BNAME}
+	echo -e ${YELLOW}"[*] Your current config files are stored in : ${_dir}/${_wmpkg}_backup_${BNAME} , In case you want to use them." && reset_color
+}
+
 post_install() {
-	echo '*************************'
-	echo -e "\n[*] Configurations for Openbox is updated.\nPlease copy the new config files manually from '/etc/skel/.config' before you login into openbox.\n"
-	echo '*************************'
+	if [[ ! -d "${_dir}/${_wmpkg}"  ]]; then
+		install_wm
+	else
+		backup_wm
+		install_wm
+	fi
+}
+
+post_upgrade() {
+	if [[ ! -d "${_dir}/${_wmpkg}"  ]]; then
+		install_wm
+	else
+		backup_wm
+		install_wm
+	fi
+}
+
+post_remove() {
+	echo -e ${RED}"\n[*] Config files for ${_wmname} are still available in : ${_dir}/${_wmpkg} directory. If you want to remove them, Do it manually." && reset_color
 }

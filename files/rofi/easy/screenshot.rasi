@@ -1,0 +1,155 @@
+/* Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com> */
+/* Everyone is permitted to copy and distribute copies of this file under GNU-GPL3 */
+
+configuration {
+    show-icons:                     false;
+    display-drun: 					"";
+    drun-display-format:            "{icon} {name}";
+    disable-history:                false;
+	click-to-exit: 					true;
+}
+
+@import "font.rasi"
+@import "colors.rasi"
+
+/* Line Responsible For Button Layouts */
+/* BUTTON = TRUE */
+
+window {
+    transparency:                   "real";
+    background-color:               @BG;
+    text-color:                     @FG;
+    border-radius:                  0px;
+    width:                         	850px;
+    location:                       center;
+    anchor:                         center;
+    x-offset:                       0;
+    y-offset:                       0;
+}
+
+prompt {
+    enabled: 						true;
+    padding:                        10px;
+	background-color: 				@BGA;
+	text-color: 					@FG;
+    border:                  		0px 0px 0px 0px;
+    border-color:                  	@BDR;
+    border-radius:                  0%;
+}
+
+textbox-prompt-colon {
+	expand: 						false;
+	str: 							"Screenshot";
+    border-radius:                  0%;
+    background-color:               @SEL;
+    text-color:                     @BG;
+    padding:                        10px;
+	font:							"Iosevka Nerd Font 12";
+}
+
+entry {
+    background-color:               @BGA;
+    text-color:                     @FG;
+    placeholder-color:              @FG;
+    expand:                         true;
+    horizontal-align:               0;
+    placeholder:                    "Search...";
+    blink:                          true;
+    border:                  		0px 0px 2px 0px;
+    border-color:                  	@BDR;
+    border-radius:                  10px;
+    padding:                        8px;
+}
+
+inputbar {
+	children: 						[ textbox-prompt-colon, prompt ];
+    background-color:               @BG;
+    text-color:                     @FG;
+    expand:                         false;
+    spacing:                        10px;
+    border:                  		0px 0px 0px 0px;
+    border-radius:                  0px;
+    border-color:                  	@BDR;
+    margin:                         0px 0px 0px 0px;
+    padding:                        0px;
+    position:                       center;
+}
+
+case-indicator {
+    background-color:               @BG;
+    text-color:                     @FG;
+    spacing:                        0;
+}
+
+
+listview {
+    background-color:               @BG;
+    columns:                        6;
+    lines:							1;
+    spacing:                        25px;
+    cycle:                          false;
+    dynamic:                        true;
+    layout:                         vertical;
+}
+
+mainbox {
+    background-color:               @BG;
+    children:                       [ inputbar, listview ];
+    spacing:                       	25px;
+    padding:                        40px;
+}
+
+element {
+    background-color:               @BGA;
+    text-color:                     @FG;
+    orientation:                    horizontal;
+    border-radius:                  0px;
+    padding:                        40px 10px 40px 10px;
+}
+
+element-icon {
+    background-color: 				inherit;
+    text-color:       				inherit;
+    size:                           0px;
+    border:                         0px;
+}
+
+element-text {
+	font:							"feather 30";
+    background-color: 				inherit;
+    text-color:       				inherit;
+    expand:                         true;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    margin:                         0px 0px 0px 0px;
+}
+
+element selected {
+    background-color:               @IMG;
+    text-color:                     @BG;
+    border:                  		0px 0px 0px 0px;
+    border-radius:                  0px;
+    border-color:                  	@BDR;
+}
+
+element.active,
+element.selected.urgent {
+  background-color: @ON;
+  text-color: @BG;
+  border-color: @ON;
+}
+
+element.selected.urgent {
+  border-color: @BDR;
+}
+
+element.urgent,
+element.selected.active {
+  background-color: @OFF;
+  text-color: @BG;
+  border-color: @OFF;
+}
+
+element.selected.active {
+  border-color: @BDR;
+}

@@ -19,10 +19,11 @@ fi
 
 # notify
 notify_user () {
+	notify_cmd="dunstify -u low --replace=699 -i /usr/share/archcraft/icons/dunst/video.png"
 	if [[ -e "$dir/$file" ]]; then
-		dunstify -u low --replace=699 -i /usr/share/archcraft/icons/dunst/video.png "Saved in $dir"
+		${notify_cmd} "Saved in $dir"
 	else
-		dunstify -u low --replace=699 -i /usr/share/archcraft/icons/dunst/video.png "Video Deleted."
+		${notify_cmd} "Video Deleted."
 	fi
 }
 

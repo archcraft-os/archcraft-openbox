@@ -17,7 +17,7 @@ if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
 fi
 
 # Styles
-styles=(`ls -p --hide={Default.sh,"*-Bitmap.sh"} $dir`)
+styles=(`ls -p --hide={Default.sh,Easy.sh,"*-Bitmap.sh"} $dir`)
 bitmap=(`cd $dir && ls *-Bitmap.sh`)
 
 # Effects
@@ -47,6 +47,7 @@ gen_menu () {
 
 	menuStart
 	menuItem "Default" "bash $dir/Default.sh"
+	menuItem "Easy Mode" "bash $dir/Easy.sh"
 	menuSeparator "| Simple |"
 	for style in "${styles[@]}"; do
 		menuItem "${count}. ${style%.*}" "bash $dir/$style"

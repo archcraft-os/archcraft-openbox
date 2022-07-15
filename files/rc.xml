@@ -413,6 +413,11 @@
         <command>volume --toggle</command>
       </action>
     </keybind>
+    <keybind key="XF86AudioMicMute">
+      <action name="Execute">
+        <command>volume --toggle-mic</command>
+      </action>
+    </keybind>
     <keybind key="XF86AudioStop">
       <action name="Execute">
         <command>mpc stop</command>
