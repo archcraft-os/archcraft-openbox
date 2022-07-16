@@ -41,22 +41,26 @@ backup_wm() {
 	echo -e ${YELLOW}"[*] Your current config files are stored in : ${_dir}/${_wmpkg}_backup_${BNAME} , In case you want to use them." && reset_color
 }
 
-post_install() {
-	if [[ ! -d "${_dir}/${_wmpkg}"  ]]; then
-		install_wm
+## Main
+run_main() {
+	if [[ "${_group}" == 'liveuser' ]]; then
+		exit
 	else
-		backup_wm
-		install_wm
+		if [[ ! -d "${_dir}/${_wmpkg}"  ]]; then
+			install_wm
+		else
+			backup_wm
+			install_wm
+		fi
 	fi
 }
 
+post_install() {
+	run_main
+}
+
 post_upgrade() {
-	if [[ ! -d "${_dir}/${_wmpkg}"  ]]; then
-		install_wm
-	else
-		backup_wm
-		install_wm
-	fi
+	run_main
 }
 
 post_remove() {
