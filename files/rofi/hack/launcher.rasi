@@ -98,11 +98,11 @@ element normal.normal {
 }
 element normal.urgent {
     background-color: 				@BG;
-    text-color:       				@red;
+    text-color:       				inherit;
 }
 element normal.active {
     background-color: 				@BG;
-    text-color:       				@green;
+    text-color:       				inherit;
 }
 element selected.normal {
     background-color: 				@BG;
@@ -112,7 +112,7 @@ element selected.normal {
 }
 element selected.urgent {
     background-color: 				@BG;
-    text-color:       				@red;
+    text-color:       				inherit;
 }
 element selected.active {
     background-color: 				@BG;
