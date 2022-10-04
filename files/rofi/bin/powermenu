@@ -45,6 +45,8 @@ show_msg() {
 options="$lock\n$suspend\n$logout\n$reboot\n$shutdown"
 
 chosen="$(echo -e "$options" | $rofi_command -p "UP - $uptime" -dmenu -selected-row 0)"
+# Small delay to prevent inadvertedly closing confirm dialog when using mouse double click
+sleep 0.1 
 case $chosen in
     $shutdown)
 		ans=$(rdialog &)
