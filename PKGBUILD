@@ -2,7 +2,7 @@
 
 pkgname=archcraft-openbox
 pkgver=2.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Openbox WM Configurations for Archcraft"
 url="https://github.com/archcraft-os/archcraft-openbox"
 arch=('any')
@@ -21,7 +21,6 @@ depends=('openbox' 'obconf'
 		'xorg-xsetroot'
 		'xmlstarlet'
 		'yad'
-		'python2'
 )
 conflicts=()
 provides=("${pkgname}")
