@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+##
+## Openbox Pipemenu to change alacritty terminal color scheme
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Dir
+dir="$HOME/.config/alacritty"
+
+# Schemes
+schemes=($(ls -p $dir/colorschemes))
+
+# Main
+main () {
+	local count=1
+
+	menuStart
+	for scheme in "${schemes[@]}"; do
+		menuItem "${count}. ${scheme%.*}" "$0 ${scheme}"
+		count=$(($count+1))
+	done
+	menuEnd
+
+	for scheme in "${schemes[@]}"; do
+		if [[ "$1" == "$scheme" ]]; then
+			cat "$dir"/colorschemes/"$1" > "$dir"/colors.yml
+		fi
+	done
+}
+
+main "$1"

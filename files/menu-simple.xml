@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com> -->
+<!DOCTYPE menu [
+  <!ENTITY pipes "/usr/share/archcraft/openbox/pipemenus">
+]>
+<openbox_menu xmlns="http://openbox.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openbox.org/  file:///usr/share/openbox/menu.xsd">
+  <menu id="root-menu" title="Menu" label="Openbox 3">
+<!--	<separator label="Main Menu"/>  -->
+		<item label="Terminal Emulator">
+			<action name="Execute">
+				<command>alacritty</command>
+			</action>
+		</item>
+		<item label="File Manager">
+			<action name="Execute">
+				<command>thunar</command>
+			</action>
+		</item>
+		<item label="Web Browser">
+			<action name="Execute">
+				<command>firefox</command>
+			</action>
+		</item>
+		<item label="Text Editor">
+			<action name="Execute">
+				<command>geany</command>
+			</action>
+		</item>
+		<separator/>
+		<menu id="app-menu" execute="obmenu-generator" label="Applications"/>
+		<menu id="ac-asroot" execute="&pipes;/ac-asroot" label="Apps As Root"/>
+		<menu id="ac-shots" execute="&pipes;/ac-shots" label="Screenshot"/>
+		<menu id="ac-record" execute="&pipes;/ac-record" label="Screen Recorder"/>
+		<separator/>
+		<menu id="ac-places" execute="&pipes;/ac-places --recent ~/" label="Places"/>
+		<menu id="ac-recent" execute="&pipes;/ac-recent-files" label="Recent Files"/>
+		<menu id="preferences" label="Preferences">
+			<menu id="obconfig" label="Openbox">
+				<menu id="ac-ob-menu" execute="&pipes;/ac-ob-menu" label="Menu Style"/>
+				<item label="Settings">
+					<action name="Execute">
+						<command>obconf</command>
+					</action>
+				</item>
+				<separator/>
+				<item label="Edit menu.xml">
+					<action name="Execute">
+						<command>exo-open ~/.config/openbox/menu-simple.xml</command>
+					</action>
+				</item>
+				<item label="Edit rc.xml">
+					<action name="Execute">
+						<command>exo-open ~/.config/openbox/rc.xml</command>
+					</action>
+				</item>
+				<item label="Edit autostart">
+					<action name="Execute">
+						<command>exo-open ~/.config/openbox/autostart</command>
+					</action>
+				</item>
+				<separator/>
+				<item label="Reconfigure">
+					<action name="Reconfigure"/>
+				</item>
+				<item label="Restart">
+					<action name="Restart"/>
+				</item>
+			</menu>
+			<menu id="CompositingPipeMenu" execute="&pipes;/ac-compositor" label="Compositor"/>
+			<menu id="XrandrPipeMenu" execute="&pipes;/ac-randr" label="Display / Monitor"/>
+			<separator/>
+			<menu id="StylePipeMenu" execute="&pipes;/ac-change-style" label="Change Style"/>
+			<menu id="FontPipeMenu" execute="&pipes;/ac-change-fonts" label="Change Font"/>
+			<menu id="SchemePipeMenu" execute="&pipes;/ac-change-scheme" label="Terminal Colors"/>
+			<separator/>
+			<item label="Change Wallpaper">
+				<action name="Execute">
+					<command>nitrogen</command>
+				</action>
+			</item>
+			<item label="Appearance Settings">
+				<action name="Execute">
+					<command>xfce4-appearance-settings</command>
+				</action>
+			</item>
+			<item label="QT5 Settings">
+				<action name="Execute">
+					<command>qt5ct</command>
+				</action>
+			</item>
+			<item label="Kvantum Manager">
+				<action name="Execute">
+					<command>kvantummanager</command>
+				</action>
+			</item>
+			<separator/>
+			<item label="Power Settings">
+				<action name="Execute">
+					<command>xfce4-power-manager-settings</command>
+				</action>
+			</item>
+			<item label="Settings Manager">
+				<action name="Execute">
+					<command>xfce4-settings-manager</command>
+				</action>
+			</item>
+		</menu>
+		<menu id="KeybindsPipeMenu" execute="&pipes;/ac-kb-pipemenu" label="Keybinds"/>
+		<separator/>
+		<item label="Lock Screen">
+			<action name="Execute">
+				<command>betterlockscreen --lock</command>
+			</action>
+		</item>
+		<menu id="Exit" label="System">
+				<menu id="SystemPipeMenu" execute="&pipes;/ac-sysinfo" label="Stats"/>
+				<separator/>
+				<item label="Logout">
+					<action name="Execute">
+						<command>&pipes;/ac-powermenu --logout</command>
+					</action>
+				</item>
+				<item label="Suspend">
+					<action name="Execute">
+						<command>&pipes;/ac-powermenu --suspent</command>
+					</action>
+				</item>
+				<item label="Reboot">
+					<action name="Execute">
+						<command>&pipes;/ac-powermenu --reboot</command>
+					</action>
+				</item>
+				<item label="Shutdown">
+					<action name="Execute">
+						<command>&pipes;/ac-powermenu --shutdown</command>
+					</action>
+				</item>
+		</menu>
+	</menu>
+</openbox_menu>
+<!-- vim:sw=2
+-->

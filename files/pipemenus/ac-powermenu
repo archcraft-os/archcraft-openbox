@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+##
+## Commands Executed By Openbox Powermenu
+
+## Rofi #############################################
+# Theme
+DIR="$HOME/.config/openbox-themes/themes"
+CTHEME="`cat $DIR/.current`"
+RASI="$DIR/$CTHEME/rofi/confirm.rasi"
+
+# Layout
+cnflayout=`cat ${RASI} | grep 'USE_ICON' | cut -d'=' -f2`
+if [[ "$cnflayout" == 'NO' ]]; then
+	yes=' Yes'
+	no=' No'
+else
+	yes=''
+	no=''
+fi
+
+# Confirmation CMD
+confirm_cmd() {
+	rofi -dmenu \
+		-p 'Confirmation' \
+		-mesg 'Are you Sure?' \
+		-theme ${RASI}
+}
+
+# Ask for confirmation
+confirm_exit() {
+	echo -e "$yes\n$no" | confirm_cmd
+}
+
+# Confirm and execute
+confirm_run () {	
+	selected="$(confirm_exit)"
+	if [[ "$selected" == "$yes" ]]; then
+        ${1} && ${2} && ${3}
+    else
+        exit
+    fi	
+}
+
+## Options #############################################
+if [[ "$1" == '--logout' ]]; then
+	confirm_run 'openbox --exit'
+elif [[ "$1" == '--suspent' ]]; then
+	confirm_run 'mpc -q pause' 'pulsemixer --mute' 'betterlockscreen --suspend'
+elif [[ "$1" == '--reboot' ]]; then
+	confirm_run 'systemctl reboot'
+elif [[ "$1" == '--shutdown' ]]; then
+	confirm_run 'systemctl poweroff'
+
+## Help Menu #############################################
+else
+echo "
+Powermenu For Openbox Menu
+Developed By - Aditya Shakya (@adi1090x)
+
+Available options:
+--logout	--suspent	--reboot	--shutdown
+"
+fi

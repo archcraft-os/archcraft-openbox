@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+##
+## Openbox Pipemenu to change openbox themes
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Dir
+DIR="$HOME/.config/openbox-themes/themes"
+CTHEME="`cat $DIR/.current`"
+
+# Themes
+THEMES=(`cd $DIR && ls -d */ | cut -d '/' -f1`)
+
+# Generate menu
+gen_menu () {
+    local COUNT=1
+
+	menuStart
+	menuSeparator "⁌ Themes (`echo ${#THEMES[@]}`) ⁍"
+	
+	# Random Colors (pywal)
+	if [[ -e "$DIR/$CTHEME/random.sh" ]]; then
+		menuSubmenu "current_theme" "0. Current"
+			menuSeparator "${CTHEME^}"
+			menuItem "✤ Change Colors" "bash $DIR/$CTHEME/random.sh"
+		menuSubmenuEnd
+		menuSeparator
+	fi
+
+	# In-built Themes
+	for THEME in "${THEMES[@]}"; do
+		menuItem "${COUNT}. ${THEME^}" "bash $DIR/$THEME/apply.sh"
+		COUNT=$(($COUNT+1))
+	done
+	menuEnd
+}
+
+{ gen_menu; exit 0; }

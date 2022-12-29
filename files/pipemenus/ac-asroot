@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+##
+## Openbox Pipemenu to open applications as root
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# cmd
+root_cmd="$HOME/.config/openbox-themes/scripts/asroot"
+
+# menu
+menuStart
+	menuItem 'Terminal (alacritty)' "$root_cmd 'alacritty'"
+	menuItem 'File Manager (thunar)' "$root_cmd 'dbus-run-session thunar'"
+	menuItem 'Text Editor (geany)' "$root_cmd 'geany'"
+	menuSeparator
+	menuItem 'File Manager CLI (ranger)' "$root_cmd 'alacritty -e ranger'"
+	menuItem 'Text Editor CLI (vim)' "$root_cmd 'alacritty -e vim'"
+	menuSeparator
+	menuItem 'QT5 Settings' "$root_cmd 'qt5ct'"
+	menuItem 'kvantum Manager' "$root_cmd 'kvantummanager'"
+menuEnd
