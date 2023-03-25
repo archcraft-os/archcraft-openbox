@@ -81,7 +81,7 @@ backup_thms() {
 	BTNAME="`echo $RANDOM`"
 	mv ${_dir}/${_thpkg} ${_dir}/${_thpkg}_backup_${BTNAME}
 	chown -R ${_user}:${_group} ${_dir}/${_thpkg}_backup_${BTNAME}
-	echo -e ${Yellow}"[*] Your current themes are stored in : ${BYellow}${_dir}/${_thpkg}_backup_${BNAME}${Yellow} , In case you want to use them." ${Color_Off}
+	echo -e ${Yellow}"[*] Your current themes are stored in : ${BYellow}${_dir}/${_thpkg}_backup_${BTNAME}${Yellow} , In case you want to use them." ${Color_Off}
 }
 
 ## -----------------------------------
