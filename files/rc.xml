@@ -777,8 +777,26 @@
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
+      <!--
       <mousebind action="Drag" button="W-Left">
         <action name="Move"/>
+      </mousebind>
+      //-->
+      <mousebind action="Drag" button="A-Left">
+        <action name="if">
+          <maximized>yes</maximized>
+          <then>
+            <action name="UnmaximizeFull"/>
+            <action name="MoveResizeTo">
+              <x>center</x>
+              <y>current</y>
+            </action>
+            <action name="Move"/>
+          </then>
+          <else>
+            <action name="Move"/>
+          </else>
+        </action>
       </mousebind>
       <mousebind action="Press" button="A-Right">
         <action name="Focus"/>
@@ -788,25 +806,36 @@
       <mousebind action="Drag" button="A-Right">
         <action name="Resize"/>
       </mousebind>
+      <mousebind action="Click" button="A-Up">
+        <action name="GoToDesktop">
+          <to>previous</to>
+        </action>
+      </mousebind>
+      <mousebind action="Click" button="A-Down">
+        <action name="GoToDesktop">
+          <to>next</to>
+        </action>
+      </mousebind>
     </context>
     <context name="Titlebar">
       <mousebind action="Press" button="A-Left">
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
+      <!--
       <mousebind action="Drag" button="A-Left">
         <action name="Move"/>
       </mousebind>
+      //-->
       <mousebind action="Press" button="Left">
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
       <mousebind action="Drag" button="Left">
         <action name="if">
-          <maximizedvertical>yes</maximizedvertical>
+          <maximized>yes</maximized>
           <then>
-            <action name="Unmaximize"/>
-            <direction>vertical</direction>
+            <action name="UnmaximizeFull"/>
             <action name="MoveResizeTo">
               <x>center</x>
               <y>current</y>
@@ -857,10 +886,16 @@
       </mousebind>
     </context>
     <context name="Titlebar Top Right Bottom Left TLCorner TRCorner BRCorner BLCorner">
+      <!--
       <mousebind action="Press" button="Left">
         <action name="Focus"/>
         <action name="Raise"/>
         <action name="Unshade"/>
+      </mousebind>
+      //-->
+      <mousebind action="Press" button="Left">
+        <action name="Focus"/>
+        <action name="Raise"/>
       </mousebind>
       <mousebind action="Press" button="Right">
         <action name="Focus"/>
@@ -1006,8 +1041,21 @@
           <to>next</to>
         </action>
       </mousebind>
+      <mousebind action="Click" button="Up">
+        <action name="GoToDesktop">
+          <to>previous</to>
+        </action>
+      </mousebind>
+      <mousebind action="Click" button="Down">
+        <action name="GoToDesktop">
+          <to>next</to>
+        </action>
+      </mousebind>
     </context>
     <context name="Root">
+      <mousebind action="Press" button="Left">
+        <action name="ToggleShowDesktop"/>
+      </mousebind>
       <mousebind action="Press" button="Middle">
         <action name="ShowMenu">
           <menu>client-list-combined-menu</menu>
