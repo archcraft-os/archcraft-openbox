@@ -826,9 +826,11 @@
           <shaded>no</shaded>
           <then>
             <action name="Shade"/>
+            <!--
             <action name="FocusToBottom"/>
             <action name="Unfocus"/>
             <action name="Lower"/>
+            //-->
           </then>
         </action>
       </mousebind>
