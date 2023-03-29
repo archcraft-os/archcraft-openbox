@@ -860,7 +860,9 @@
       <mousebind action="Press" button="Left">
         <action name="Focus"/>
         <action name="Raise"/>
+        <!--
         <action name="Unshade"/>
+        //-->
       </mousebind>
       <mousebind action="Press" button="Right">
         <action name="Focus"/>
