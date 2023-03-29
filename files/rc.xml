@@ -777,8 +777,26 @@
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
+      <!--
       <mousebind action="Drag" button="W-Left">
         <action name="Move"/>
+      </mousebind>
+      //-->
+      <mousebind action="Drag" button="A-Left">
+        <action name="if">
+          <maximized>yes</maximized>
+          <then>
+            <action name="UnmaximizeFull"/>
+            <action name="MoveResizeTo">
+              <x>center</x>
+              <y>current</y>
+            </action>
+            <action name="Move"/>
+          </then>
+          <else>
+            <action name="Move"/>
+          </else>
+        </action>
       </mousebind>
       <mousebind action="Press" button="A-Right">
         <action name="Focus"/>
@@ -794,19 +812,39 @@
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
+      <!--
       <mousebind action="Drag" button="A-Left">
         <action name="Move"/>
       </mousebind>
+      //-->
       <mousebind action="Press" button="Left">
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
+      <!--
       <mousebind action="Drag" button="Left">
         <action name="if">
           <maximizedvertical>yes</maximizedvertical>
           <then>
             <action name="Unmaximize"/>
             <direction>vertical</direction>
+            <action name="MoveResizeTo">
+              <x>center</x>
+              <y>current</y>
+            </action>
+            <action name="Move"/>
+          </then>
+          <else>
+            <action name="Move"/>
+          </else>
+        </action>
+      </mousebind>
+      //-->
+      <mousebind action="Drag" button="Left">
+        <action name="if">
+          <maximized>yes</maximized>
+          <then>
+            <action name="UnmaximizeFull"/>
             <action name="MoveResizeTo">
               <x>center</x>
               <y>current</y>
