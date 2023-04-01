@@ -12,7 +12,7 @@ if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
 fi
 
 # User's config dir
-dir="$HOME/.config/"
+dir="$HOME/.config"
 
 readonly EXECXCOMP='picom'
 readonly RESTART_ATTEMPTS=20
@@ -42,7 +42,7 @@ done
 declareDependencies picom
 
 ##-- various checks ---------------------
-check_backend=$(cat $dir/picom.conf | grep "backend = " | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:],"')
+check_backend=$(cat $dir/picom.conf | grep 'backend = ' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:],"')
 check_corners=$(cat $dir/picom.conf | grep 'corner-radius =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
 check_border=$(cat $dir/picom.conf | grep 'round-borders =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
 check_shadow=$(cat $dir/picom.conf | grep 'shadow =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
@@ -147,7 +147,7 @@ elif [[ $1 = '--enable-shadows' ]]; then
 
 elif [[ $1 = '--reset-shadows' ]]; then
 	sed -i -e "s/shadow-radius = .*/shadow-radius = 14;/g" $dir/picom.conf
-	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.30;/g" $dir/picom.conf
+	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.35;/g" $dir/picom.conf
 	sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = -12;/g" $dir/picom.conf
 	sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = -12;/g" $dir/picom.conf
 
@@ -199,6 +199,14 @@ else
     if ! [[ $(pidof picom) ]]; then
         menuItem 'Enable Compositor' "$0 --start"
     else
+        menuSeparator 'Current Compositor'
+		if [[ `pacman -Q picom-jonaburg-git` ]]; then
+			menuItem "Jonaburg's fork of picom" "echo"
+		elif [[ `pacman -Q picom-ibhagwan-git` ]]; then
+			menuItem "ibhagwan's fork of picom" "echo"
+		elif [[ `pacman -Q picom` ]]; then
+			menuItem "Original picom from Arch Repo" "echo"
+		fi
         menuSeparator 'Backend'
 		if [[ "$check_backend" != "glx" ]]; then
 			menuItem "Use 'glx' backend" "$0 --use-glx"
@@ -212,12 +220,14 @@ else
 		else
 			menuItem 'Enable Rounded Corners' "$0 --corner-radius"
 		fi
-        menuSeparator 'Border'
-		if [[ "$check_border" != "0" ]]; then
-			menuItem 'Change Border Size' "$0 --border-size"
-			menuItem 'Disable Borders' "$0 --disable-borders"
-		else
-			menuItem 'Enable Borders' "$0 --border-size"
+		if [[ `pacman -Q picom-jonaburg-git` || `pacman -Q picom-ibhagwan-git` ]]; then
+			menuSeparator 'Border'
+			if [[ "$check_border" != "0" ]]; then
+				menuItem 'Change Border Size' "$0 --border-size"
+				menuItem 'Disable Borders' "$0 --disable-borders"
+			else
+				menuItem 'Enable Borders' "$0 --border-size"
+			fi
 		fi
         menuSeparator 'Shadow'
 		if [[ "$check_shadow" == "true" ]]; then
@@ -235,12 +245,14 @@ else
 		else
 			menuItem 'Enable Fading' "$0 --enable-fading"
 		fi
-        menuSeparator 'Blur'
-		if [[ "$check_blur" != "dual_kawase" ]]; then
-			menuItem 'Enable Blur Effect' "$0 --enable-blur"
-		else
-			menuItem 'Set Blur Strength' "$0 --update-blur"
-			menuItem 'Disable Blur Effect' "$0 --disable-blur"
+		if [[ `pacman -Q picom-jonaburg-git` || `pacman -Q picom-ibhagwan-git` ]]; then
+			menuSeparator 'Blur'
+			if [[ "$check_blur" != "dual_kawase" ]]; then
+				menuItem 'Enable Blur Effect' "$0 --enable-blur"
+			else
+				menuItem 'Set Blur Strength' "$0 --update-blur"
+				menuItem 'Disable Blur Effect' "$0 --disable-blur"
+			fi
 		fi
         menuSeparator 'Settings'
         menuItem 'Restart Compositor' "$0 --restart"
