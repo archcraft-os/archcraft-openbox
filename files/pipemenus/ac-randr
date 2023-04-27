@@ -247,4 +247,4 @@ def get_xml():
 
 if __name__ == '__main__':
     ob_menu = get_xml()
-    sys.stdout.write(f"{etree.tostring(ob_menu)}\n")
+    sys.stdout.write(f"{etree.tostring(ob_menu).decode()}\n")
