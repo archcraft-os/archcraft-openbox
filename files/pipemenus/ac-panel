@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+##
+## Openbox Pipemenu to change panel/bar
+
+# Variables and functions
+MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
+	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+	exit 1
+fi
+
+# Dir and Files
+DIR="$HOME/.config/openbox/themes"
+CPANEL="$DIR/.panel"
+
+# Create file if it doesn't exist
+create_file () {
+	if [[ ! -e "$CPANEL" ]]; then
+		touch ${CPANEL}
+	fi
+}
+create_file
+
+# Check which bar is running
+check_bar () {
+	if [[ `pidof polybar` && `pidof tint2` ]]; then
+		BAR='Both'
+	elif [[ `pidof polybar` ]]; then
+		BAR='Polybar'
+	elif [[ `pidof tint2` ]]; then
+		BAR='Tint2'
+	else
+		BAR='None'	
+	fi
+}
+check_bar
+
+# Change bar/panel
+change_bar () {
+	if [[ "$1" == 'tint2' ]]; then
+		pkill polybar
+		sleep 1
+		bash "$DIR"/tint2.sh
+		echo 'tint2' > ${CPANEL}
+	elif [[ "$1" == 'polybar' ]]; then
+		pkill tint2
+		bash "$DIR"/polybar.sh
+		echo 'polybar' > ${CPANEL}
+	fi
+}
+
+# Execute accordingly
+if [[ "$1" == '--polybar' ]]; then
+	change_bar 'polybar'
+elif [[ "$1" == '--tint2' ]]; then
+	change_bar 'tint2'
+elif [[ "$1" == '--pb' ]]; then
+	bash "$DIR"/polybar.sh
+elif [[ "$1" == '--t2' ]]; then
+	bash "$DIR"/tint2.sh
+fi
+
+# Generate menu
+gen_menu () {
+	menuStart
+	menuSeparator "Current Bar : $BAR"
+
+	# Change/Set Panel
+	if [[ "$BAR" = 'Polybar' ]]; then
+		menuItem "Use Tint2 as your panel/taskbar" "$0 --tint2"
+	elif [[ "$BAR" = 'Tint2' ]]; then
+		menuItem "Use Polybar as your statusbar" "$0 --polybar"
+	elif [[ "$BAR" = 'None' ]]; then
+		menuItem "Launch Polybar" "$0 --pb"
+		menuItem "Launch Tint2" "$0 --t2"
+	elif [[ "$BAR" = 'Both' ]]; then
+		menuItem "Kill Polybar" "pkill polybar"
+		menuItem "Kill Tint2" "pkill tint2"
+	fi
+	
+	menuEnd
+}
+
+{ gen_menu; exit 0; }

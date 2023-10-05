@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+##
+## Network Executor For Tint2
+
+ESSID=`iwgetid | awk -F '"' '{ print $2 }'`
+
+if [[ ! -z "$ESSID" ]]; then
+	echo "󰤨 $ESSID"
+else
+	echo '󰤭 Disconnected'
+fi

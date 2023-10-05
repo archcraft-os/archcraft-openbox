@@ -1,0 +1,88 @@
+## Colors ----------------------------
+
+# Text Reset
+Color_Off='\033[0m'
+
+# Regular
+Black='\033[0;30m'  Red='\033[0;31m'     Green='\033[0;32m'  Yellow='\033[0;33m'
+Blue='\033[0;34m'   Purple='\033[0;35m'  Cyan='\033[0;36m'   White='\033[0;37m'
+
+# Bold
+BBlack='\033[1;30m' BRed='\033[1;31m'    BGreen='\033[1;32m' BYellow='\033[1;33m'
+BBlue='\033[1;34m'  BPurple='\033[1;35m' BCyan='\033[1;36m'  BWhite='\033[1;37m'
+
+## -----------------------------------
+
+## User info
+user_name=`echo ${SUDO_USER:-$(whoami)}`
+group_id=`echo ${SUDO_GID}`
+user_group=`cat /etc/group | grep $group_id | cut -d: -f1 | head -1`
+
+## Packages specific
+config_dir="/home/${user_name}/.config"
+skel_dir='/etc/skel/.config'
+wm_config='openbox'
+wm_name='Openbox'
+current_config="$config_dir/$wm_config"
+updated_config="$config_dir/${wm_config}_pacnew_`date +%d-%m-%y`"
+
+## -----------------------------------
+
+## Install Config files
+install_wm_config() {
+	echo -e ${Blue}"\n[*] Copying ${BBlue}${wm_name}${Blue} config files into ${BBlue}${config_dir}" ${Color_Off}
+	mkdir -p "$current_config"
+	cp -rf "$skel_dir/$wm_config"/* "$current_config"/
+	chown -R ${user_name}:${user_group} "$current_config"
+
+	if [[ -d "$current_config" ]]; then
+		echo -e ${Green}"[*] Configuration files installed successfully!\n" ${Color_Off}
+	else
+		echo -e ${Red}"[!] Failed to install configuration files!\n" ${Color_Off}
+	fi
+}
+
+## Update Config files
+update_wm_config() {
+	echo -e ${Blue}"\n[*] Copying latest ${BBlue}${wm_name}${Blue} config files into ${BBlue}${config_dir}" ${Color_Off}
+	mkdir -p "$updated_config"
+	cp -rf "$skel_dir/$wm_config"/* "$updated_config"/
+	chown -R ${user_name}:${user_group} "$updated_config"
+
+	if [[ -d "$updated_config" ]]; then
+		echo -e ${Green}"[*] Latest configuration files installed successfully!" ${Color_Off}
+		echo -e ${Yellow}"[+] Latest config files are stored in : ${BYellow}${updated_config}${Yellow}" ${Color_Off}		
+		echo -e ${Purple}"[*] To use latest config files, rename ${BPurple}${updated_config}${Purple} to ${BPurple}${current_config}${Purple}\n" ${Color_Off}		
+	else
+		echo -e ${Red}"[!] Failed to install latest configuration files!\n" ${Color_Off}
+	fi
+}
+
+## -----------------------------------
+
+## Main
+run_main() {
+	if [[ "$user_group" == 'liveuser' ]]; then
+		exit
+	else
+		if [[ ! -d "$current_config"  ]]; then
+			install_wm_config
+		else
+			update_wm_config
+		fi
+	fi
+}
+
+post_install() {
+	run_main
+}
+
+post_upgrade() {
+	run_main
+}
+
+post_remove() {
+	if [[ -d "$current_config"  ]]; then
+		echo -e ${Red}"\n[*] Config files for ${BYellow}${wm_name}${Red} are still available in : ${BGreen}${current_config}${Red} directory. If you want to remove them, Do it manually.\n" ${Color_Off}
+	fi
+}

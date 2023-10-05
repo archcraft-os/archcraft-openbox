@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+
+DIR="$HOME/.config/openbox"
+
+## rofi sudo askpass helper
+export SUDO_ASKPASS="$DIR"/scripts/rofi-askpass
+
+## execute the application
+sudo -A $1

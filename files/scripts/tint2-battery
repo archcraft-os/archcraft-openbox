@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+##
+## Battery Executor For Tint2
+## Dependencies: `acpi`
+
+# Get battery percentage
+get_bat_perc() {
+	acpi -b | cut -d',' -f2 | tr -d ' ',\%
+}
+
+# Get battery status
+get_bat_stat() {
+	acpi -b | cut -d',' -f1 | cut -d':' -f2 | tr -d ' '
+}
+
+# Get icons
+get_icon() {
+	BAT_PREC=`get_bat_perc`
+	BAT_STAT=`get_bat_stat`
+
+	if [[ "$BAT_STAT" == *"Full"* ]]; then
+		icon=''
+	elif [[ "$BAT_STAT" == *"Charging"* ]]; then
+		icon=''
+	else
+		if [[ ("$BAT_PREC" -ge "0") && ("$BAT_PREC" -le "20") ]]; then
+			icon=''
+		elif [[ ("$BAT_PREC" -ge "20") && ("$BAT_PREC" -le "40") ]]; then
+			icon=''
+		elif [[ ("$BAT_PREC" -ge "40") && ("$BAT_PREC" -le "60") ]]; then
+			icon=''
+		elif [[ ("$BAT_PREC" -ge "60") && ("$BAT_PREC" -le "80") ]]; then
+			icon=''
+		elif [[ ("$BAT_PREC" -ge "80") && ("$BAT_PREC" -le "100") ]]; then
+			icon=''
+		fi
+	fi
+}
+
+# Get status
+get_status() {
+	get_icon
+	if [[ "$BAT_STAT" == *"Full"* ]]; then
+		echo "$icon Full"
+	else
+		echo "$icon $(get_bat_perc)%"
+	fi
+}
+get_status
