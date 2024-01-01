@@ -24,7 +24,7 @@ skel_dir='/etc/skel/.config'
 wm_config='openbox'
 wm_name='Openbox'
 current_config="$config_dir/$wm_config"
-updated_config="$config_dir/${wm_config}_pacnew_`date +%d-%m-%y`"
+updated_config="$config_dir/${wm_config}_pacnew_`date +%Y-%m-%d`"
 
 ## -----------------------------------
 

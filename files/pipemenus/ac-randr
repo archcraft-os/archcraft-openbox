@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+## Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
 
 """A small utility to make xrandr adjustments from an OpenBox menu.
 

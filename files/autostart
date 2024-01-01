@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+## Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
 
 ## Kill if already running
 killall -9 xfsettingsd picom polybar mpd dunst ksuperkey xfce4-power-manager

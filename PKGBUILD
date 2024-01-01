@@ -1,7 +1,7 @@
 # Maintainer: Aditya Shakya <adi1090x@gmail.com>
 
 pkgname=archcraft-openbox
-pkgver=5.0
+pkgver=6.0
 pkgrel=0
 pkgdesc="Openbox Configurations for Archcraft"
 arch=('any')

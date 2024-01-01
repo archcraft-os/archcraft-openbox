@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+## Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
 
 # obmenu-generator - schema file
 

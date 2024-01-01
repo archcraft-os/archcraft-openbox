@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
+## Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
 ##
 ## Script To Apply Themes
 
@@ -119,40 +119,36 @@ apply_netmenu() {
 # Terminal ----------------------------------
 apply_terminal() {
 	# alacritty : fonts
-	sed -i ${PATH_TERM}/fonts.yml \
-		-e "s/family: .*/family: \"$terminal_font_name\"/g" \
-		-e "s/size: .*/size: $terminal_font_size/g"
+	sed -i ${PATH_TERM}/fonts.toml \
+		-e "s/family = .*/family = \"$terminal_font_name\"/g" \
+		-e "s/size = .*/size = $terminal_font_size/g"
 
 	# alacritty : colors
-	cat > ${PATH_TERM}/colors.yml <<- _EOF_
+	cat > ${PATH_TERM}/colors.toml <<- _EOF_
 		## Colors configuration
-		colors:
-		  # Default colors
-		  primary:
-		    background: '${background}'
-		    foreground: '${foreground}'
-
-		  # Normal colors
-		  normal:
-		    black:   '${color0}'
-		    red:     '${color1}'
-		    green:   '${color2}'
-		    yellow:  '${color3}'
-		    blue:    '${color4}'
-		    magenta: '${color5}'
-		    cyan:    '${color6}'
-		    white:   '${color7}'
-
-		  # Bright colors
-		  bright:
-		    black:   '${color8}'
-		    red:     '${color9}'
-		    green:   '${color10}'
-		    yellow:  '${color11}'
-		    blue:    '${color12}'
-		    magenta: '${color13}'
-		    cyan:    '${color14}'
-		    white:   '${color15}'
+		[colors.primary]
+		background = "${background}"
+		foreground = "${foreground}"
+		
+		[colors.normal]
+		black   = "${color0}"
+		red     = "${color1}"
+		green   = "${color2}"
+		yellow  = "${color3}"
+		blue    = "${color4}"
+		magenta = "${color5}"
+		cyan    = "${color6}"
+		white   = "${color7}"
+		
+		[colors.bright]
+		black   = "${color8}"
+		red     = "${color9}"
+		green   = "${color10}"
+		yellow  = "${color11}"
+		blue    = "${color12}"
+		magenta = "${color13}"
+		cyan    = "${color14}"
+		white   = "${color15}"
 	_EOF_
 
 	# xfce terminal : fonts & colors
