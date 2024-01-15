@@ -153,12 +153,11 @@ apply_terminal() {
 	_EOF_
 
 	# xfce terminal : fonts & colors
-	sed -i ${PATH_XFCE}/terminalrc \
-		-e "s/FontName=.*/FontName=$terminal_font_name $terminal_font_size/g" \
-		-e "s/ColorBackground=.*/ColorBackground=${background}/g" \
-		-e "s/ColorForeground=.*/ColorForeground=${foreground}/g" \
-		-e "s/ColorCursor=.*/ColorCursor=${foreground}/g" \
-		-e "s/ColorPalette=.*/ColorPalette=${color0};${color1};${color2};${color3};${color4};${color5};${color6};${color7};${color8};${color9};${color10};${color11};${color12};${color13};${color14};${color15}/g"
+	xfconf-query -c xfce4-terminal -p /font-name -s "$terminal_font_name $terminal_font_size"
+	xfconf-query -c xfce4-terminal -p /color-background -s "$background"
+	xfconf-query -c xfce4-terminal -p /color-foreground -s "$foreground"
+	xfconf-query -c xfce4-terminal -p /color-cursor -s "$foreground"
+	xfconf-query -c xfce4-terminal -p /color-palette -s "${color0};${color1};${color2};${color3};${color4};${color5};${color6};${color7};${color8};${color9};${color10};${color11};${color12};${color13};${color14};${color15}"
 }
 
 # Geany -------------------------------------
