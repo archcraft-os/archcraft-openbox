@@ -50,8 +50,8 @@ font_rofi () {
 
 font_term () {
 	if [[ "$FONT" ]]; then
-		sed -i -e "s/family: .*/family: \"$FNAME\"/g" ${termdir}/fonts.yml
-		sed -i -e "s/size: .*/size: $FSIZE/g" ${termdir}/fonts.yml
+		sed -i -e "s/family = .*/family = \"$FNAME\"/g" ${termdir}/fonts.toml
+		sed -i -e "s/size = .*/size = $FSIZE/g" ${termdir}/fonts.toml
 	else
 		exit 0
 	fi
