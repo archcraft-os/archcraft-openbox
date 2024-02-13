@@ -3,3 +3,6 @@
 
 ## Openbox Scripts
 PATH="$HOME/.config/openbox/scripts:$PATH"; export PATH
+
+## Other
+XDG_CURRENT_DESKTOP='openbox'; export XDG_CURRENT_DESKTOP
