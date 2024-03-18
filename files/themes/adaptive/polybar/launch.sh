@@ -5,6 +5,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 CARD="$(light -L | grep 'backlight' | head -n1 | cut -d'/' -f3)"
 INTERFACE="$(ip link | awk '/state UP/ {print $2}' | tr -d :)"
+BAT="$(acpi -b)"
 RFILE="$DIR/.module"
 
 # Fix backlight and network modules
@@ -13,6 +14,10 @@ fix_modules() {
 		sed -i -e 's/backlight/bna/g' "$DIR"/config.ini
 	elif [[ "$CARD" != *"intel_"* ]]; then
 		sed -i -e 's/backlight/brightness/g' "$DIR"/config.ini
+	fi
+
+	if [[ -z "$BAT" ]]; then
+		sed -i -e 's/battery/btna/g' "$DIR"/config.ini
 	fi
 
 	if [[ "$INTERFACE" == e* ]]; then

@@ -36,7 +36,11 @@ get_icon() {
 # Get status
 get_status() {
 	get_icon
-	echo "$icon $(get_backlight)"
+	if [[ -n "$CARD" ]]; then
+		echo "$icon $(get_backlight)"
+	else
+		echo "$icon NA"
+	fi
 }
 
 # Increase brightness

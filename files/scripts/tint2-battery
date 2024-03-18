@@ -42,10 +42,14 @@ get_icon() {
 # Get status
 get_status() {
 	get_icon
-	if [[ "$BAT_STAT" == *"Full"* ]]; then
-		echo "$icon Full"
+	if [[ -n "$BAT_PREC" ]]; then
+		if [[ "$BAT_STAT" == *"Full"* ]]; then
+			echo "$icon Full"
+		else
+			echo "$icon $(get_bat_perc)%"
+		fi
 	else
-		echo "$icon $(get_bat_perc)%"
+		echo "$icon NA"
 	fi
 }
 get_status
