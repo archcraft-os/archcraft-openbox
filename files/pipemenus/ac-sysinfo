@@ -72,8 +72,16 @@ menuItem "  CPU        : $cpu" 'echo'
 menuItem "  MEMORY     :  $m_used ∙ $m_free ∙ $m_total" 'echo'
 menuItem "  SWAP       :  $s_used ∙ $s_free ∙ $s_total ∙ $swappiness" 'echo'
 menuItem "  INIT       :  $init" 'echo'
-menuItem "  BATTERY    :  $b_perc ∙ $b_stat ∙ Capacity, $b_cap" 'echo'
-menuItem "  BACKLIGHT  :  $backlight" 'echo'
+if [[ -n "$b_perc" ]]; then
+	menuItem "  BATTERY    :  $b_perc ∙ $b_stat ∙ Capacity, $b_cap" 'echo'
+else
+	menuItem "  BATTERY    :  Not Available" 'echo'
+fi
+if [[ -n "$backlight" ]]; then
+	menuItem "  BACKLIGHT  :  $backlight" 'echo'
+else
+	menuItem "  BACKLIGHT  :  No backlight controller was found" 'echo'
+fi
 menuItem "  UPTIME     :  $uptime" 'echo'
 menuItem "  LOAD       :  $load" 'echo'
 menuItem "  WIFI       :  $interface ∙ $status ∙ $ssid" 'echo'
