@@ -831,9 +831,9 @@
           <shaded>no</shaded>
           <then>
             <action name="Shade"/>
-            <action name="FocusToBottom"/>
+            <!--<action name="FocusToBottom"/>
             <action name="Unfocus"/>
-            <action name="Lower"/>
+            <action name="Lower"/>-->
           </then>
         </action>
       </mousebind>
@@ -865,7 +865,7 @@
       <mousebind action="Press" button="Left">
         <action name="Focus"/>
         <action name="Raise"/>
-        <action name="Unshade"/>
+        <!--<action name="Unshade"/>-->
       </mousebind>
       <mousebind action="Press" button="Right">
         <action name="Focus"/>
@@ -1007,6 +1007,16 @@
         </action>
       </mousebind>
       <mousebind action="Click" button="A-Down">
+        <action name="GoToDesktop">
+          <to>next</to>
+        </action>
+      </mousebind>
+      <mousebind action="Click" button="Up">
+        <action name="GoToDesktop">
+          <to>previous</to>
+        </action>
+      </mousebind>
+      <mousebind action="Click" button="Down">
         <action name="GoToDesktop">
           <to>next</to>
         </action>

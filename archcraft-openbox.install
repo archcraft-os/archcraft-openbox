@@ -28,6 +28,11 @@ updated_config="$config_dir/${wm_config}_pacnew_`date +%Y-%m-%d`"
 
 ## -----------------------------------
 
+## Copy terminal config in /root
+copy_term_cfg_root() {
+	mkdir -p /root/.config && cp -rf "$skel_dir/alacritty" $_
+}
+
 ## Install Config files
 install_wm_config() {
 	echo -e ${Blue}"\n[*] Copying ${BBlue}${wm_name}${Blue} config files into ${BBlue}${config_dir}" ${Color_Off}
@@ -75,10 +80,12 @@ run_main() {
 
 post_install() {
 	run_main
+	copy_term_cfg_root
 }
 
 post_upgrade() {
 	run_main
+	copy_term_cfg_root
 }
 
 post_remove() {
