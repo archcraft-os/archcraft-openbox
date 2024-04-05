@@ -67,9 +67,7 @@ update_wm_config() {
 
 ## Main
 run_main() {
-	if [[ "$user_group" == 'liveuser' ]]; then
-		exit
-	else
+	if [[ "$user_group" != 'liveuser' ]]; then
 		if [[ ! -d "$current_config"  ]]; then
 			install_wm_config
 		else
@@ -79,13 +77,13 @@ run_main() {
 }
 
 post_install() {
-	run_main
 	copy_term_cfg_root
+	run_main
 }
 
 post_upgrade() {
-	run_main
 	copy_term_cfg_root
+	run_main
 }
 
 post_remove() {
