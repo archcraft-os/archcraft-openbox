@@ -79,6 +79,13 @@ apply_tint2() {
 
 # Rofi --------------------------------------
 apply_rofi() {
+	border_color="`pastel color $accent | pastel format rgb-float | tr -d '[:alpha:]','(',')' | sed 's/ /,/g'`"
+
+	# modify screenshots scripts
+	sed -i -e "s/border=.*/border='$border_color'/g" \
+		${PATH_OBOX}/scripts/rofi-screenshot \
+		${PATH_OBOX}/scripts/ob-screenshot
+
 	# modify rofi scripts
 	sed -i -e "s/STYLE=.*/STYLE=\"$THEME\"/g" \
 		${PATH_OBOX}/scripts/rofi-askpass \

@@ -26,8 +26,8 @@
                             ],
 
 || ICON SETTINGS
-    | gtk_version         : The version of the Gtk library used for resolving the icon paths. (default: 3)
-    | gtk_rc_filename     : Absolute path to the Gtk configuration file.
+    | use_gtk3            : Use the Gtk3 library for resolving the icon paths. (default: 0)
+    | gtk_rc_filename     : Absolute path to the GTK configuration file.
     | missing_icon        : Use this icon for missing icons (default: gtk-missing-image)
     | icon_size           : Preferred size for icons. (default: 48)
     | generic_fallback    : Try to shorten icon name at '-' characters before looking at inherited themes. (default: 0)
@@ -53,7 +53,6 @@ our $CONFIG = {
   "force_icon_size"     => 0,
   "generic_fallback"    => 0,
   "gtk_rc_filename"     => "$ENV{HOME}/.gtkrc-2.0",
-  "gtk_version"         => 3,
   "icon_size"           => 48,
   "Linux::DesktopFiles" => {
                              desktop_files_paths     => [
@@ -78,5 +77,6 @@ our $CONFIG = {
   "locale_support"      => 1,
   "missing_icon"        => "gtk-missing-image",
   "terminal"            => "alacritty",
-  "VERSION"             => 0.93,
+  "use_gtk3"            => 0,
+  "VERSION"             => 0.89,
 }

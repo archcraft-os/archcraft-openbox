@@ -9,6 +9,7 @@ time=`date +%Y-%m-%d-%H-%M-%S`
 geometry=`xrandr | grep 'current' | head -n1 | cut -d',' -f2 | tr -d '[:blank:],current'`
 dir="`xdg-user-dir PICTURES`/Screenshots"
 file="Screenshot_${time}_${geometry}.png"
+border='0.322,0.585,0.886'
 
 # directory
 if [[ ! -d "$dir" ]]; then
@@ -65,7 +66,7 @@ shotwin () {
 }
 
 shotarea () {
-	cd ${dir} && maim -u -f png -s -b 2 -c 0.35,0.55,0.85,0.25 -l | copy_shot
+	cd ${dir} && maim -u -f png -s -b 2 -c ${border},0.25 -l | copy_shot
 	notify_view
 }
 
