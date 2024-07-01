@@ -1,8 +1,8 @@
 # Maintainer: Aditya Shakya <adi1090x@gmail.com>
 
 pkgname=archcraft-openbox
-pkgver=6.0
-pkgrel=9
+pkgver=7.0
+pkgrel=0
 pkgdesc="Openbox Configurations for Archcraft"
 arch=('any')
 url="https://github.com/archcraft-os/archcraft-openbox"

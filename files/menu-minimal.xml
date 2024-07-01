@@ -83,12 +83,22 @@
 					<command>qt5ct</command>
 				</action>
 			</item>
+			<item label="QT6 Settings">
+				<action name="Execute">
+					<command>qt6ct</command>
+				</action>
+			</item>
 			<item label="Kvantum Manager">
 				<action name="Execute">
 					<command>kvantummanager</command>
 				</action>
 			</item>
 			<separator/>
+			<item label="Audio Settings">
+				<action name="Execute">
+					<command>pavucontrol</command>
+				</action>
+			</item>
 			<item label="Power Settings">
 				<action name="Execute">
 					<command>xfce4-power-manager-settings</command>

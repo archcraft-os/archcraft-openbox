@@ -24,5 +24,6 @@ menuStart
 	menuItem 'Text Editor CLI (vim)' "$root_cmd 'alacritty -e vim'"
 	menuSeparator
 	menuItem 'QT5 Settings' "$root_cmd 'qt5ct'"
+	menuItem 'QT6 Settings' "$root_cmd 'qt6ct'"
 	menuItem 'kvantum Manager' "$root_cmd 'kvantummanager'"
 menuEnd
