@@ -59,7 +59,7 @@ inputbar {
 textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
-    str:                         "";
+    str:                         "";
     border-radius:               0px;
     background-color:            transparent;
     text-color:                  @foreground;

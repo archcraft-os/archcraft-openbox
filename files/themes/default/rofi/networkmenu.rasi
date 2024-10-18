@@ -105,10 +105,10 @@ prompt {
 }
 textbox-prompt-colon {
     enabled:                     true;
-    padding:                     8px 11.5px;
+    padding:                     8px 10px;
     border-radius:               100%;
     expand:                      false;
-    str:                         "直";
+    str:                         "";
     background-color:            @active;
     text-color:                  @background;
 }

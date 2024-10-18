@@ -43,7 +43,7 @@ declareDependencies picom
 
 ##-- various checks ---------------------
 check_backend=$(cat $dir/picom.conf | grep 'backend = ' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:],"')
-check_corners=$(cat $dir/picom.conf | grep 'corner-radius =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
+check_corners=$(cat $dir/picom.conf | grep 'corner-radius =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
 check_border=$(cat $dir/picom.conf | grep 'round-borders =' | cut -d'=' -f2 | tr -d ';,[:blank:]')
 check_shadow=$(cat $dir/picom.conf | grep 'shadow =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
 check_fading=$(cat $dir/picom.conf | grep 'fading =' | head -n1 | cut -d'=' -f2 | tr -d ';,[:blank:]')
@@ -107,11 +107,11 @@ elif [[ $1 = '--corner-radius' ]]; then
 	cradius=$(yad --borders=10 --width='300' --title='Corner Radius' --button=Cancel:1 --button=Okay:0  --scale --value=6 --min-value=0 --max-value=40)
 	if [[ "$cradius" ]]; then
 		sed -i -e "s/backend = .*/backend = \"glx\";/g" $dir/picom.conf
-		sed -i -e "s/corner-radius = .*/corner-radius = $cradius;/g" $dir/picom.conf
+		sed -i -e "/#-cr-start/,/#-cr-end/c\#-cr-start\ncorner-radius = $cradius;\n#-cr-end" $dir/picom.conf
     fi
 
 elif [[ $1 = '--disable-corners' ]]; then
-    sed -i -e "s/corner-radius = .*/corner-radius = 0;/g" $dir/picom.conf	
+	sed -i -e "/#-cr-start/,/#-cr-end/c\#-cr-start\ncorner-radius = 0;\n#-cr-end" $dir/picom.conf
 
 ##-- borders ---------------------
 
@@ -127,7 +127,7 @@ elif [[ $1 = '--disable-borders' ]]; then
 ##-- shadows ---------------------
 
 elif [[ $1 = '--update-shadows' ]]; then
-	get_shadows=$(yad --borders=10 --width='350' --height='200' --title='Client Shadows' --button=Cancel:1 --button=Okay:0 --form --field="Radius:NUM" 14\!0..50\!1 --field="Opacity:NUM" 0.30\!0..1\!0.1\!2  --field="X-Offset:NUM" 12\!-30..30\!1 --field="Y-Offset:NUM" 12\!-30..30\!1)
+	get_shadows=$(yad --borders=10 --width='350' --height='200' --title='Client Shadows' --button=Cancel:1 --button=Okay:0 --form --field="Radius:NUM" 20\!0..50\!1 --field="Opacity:NUM" 0.60\!0..1\!0.1\!2  --field="X-Offset:NUM" 20\!-50..50\!1 --field="Y-Offset:NUM" 20\!-50..50\!1)
 	shadow_r=$(echo $get_shadows | cut -d'|' -f1)
 	shadow_o=$(echo $get_shadows | cut -d'|' -f2)
 	shadow_x=$(echo $get_shadows | cut -d'|' -f3)
@@ -140,16 +140,16 @@ elif [[ $1 = '--update-shadows' ]]; then
 	fi
 
 elif [[ $1 = '--disable-shadows' ]]; then
-    sed -i -e "s/shadow = .*/shadow = false;/g" $dir/picom.conf	
+	sed -i -e "/#-sh-start/,/#-sh-end/c\#-sh-start\nshadow = false;\n#-sh-end" $dir/picom.conf
 
 elif [[ $1 = '--enable-shadows' ]]; then
-    sed -i -e "s/shadow = .*/shadow = true;/g" $dir/picom.conf	
+	sed -i -e "/#-sh-start/,/#-sh-end/c\#-sh-start\nshadow = true;\n#-sh-end" $dir/picom.conf
 
 elif [[ $1 = '--reset-shadows' ]]; then
-	sed -i -e "s/shadow-radius = .*/shadow-radius = 14;/g" $dir/picom.conf
-	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.35;/g" $dir/picom.conf
-	sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = -12;/g" $dir/picom.conf
-	sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = -12;/g" $dir/picom.conf
+	sed -i -e "s/shadow-radius = .*/shadow-radius = 20;/g" $dir/picom.conf
+	sed -i -e "s/shadow-opacity = .*/shadow-opacity = 0.60;/g" $dir/picom.conf
+	sed -i -e "s/shadow-offset-x = .*/shadow-offset-x = -20;/g" $dir/picom.conf
+	sed -i -e "s/shadow-offset-y = .*/shadow-offset-y = -20;/g" $dir/picom.conf
 
 ##-- fading ---------------------
 

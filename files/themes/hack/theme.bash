@@ -37,11 +37,11 @@ wdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 wallpaper="$wdir/wallpaper"
 
 # Polybar
-polybar_font='Iosevka Nerd Font:size=10;3'
+polybar_font='Iosevka:size=10;3'
 
 # Rofi
 rofi_font='Iosevka 10'
-rofi_icon='Papirus-Apps'
+rofi_icon='Hack'
 
 # Terminal
 terminal_font_name='JetBrainsMono Nerd Font'
@@ -49,7 +49,7 @@ terminal_font_size='10'
 
 # Geany
 geany_colors='hack.conf'
-geany_font='JetBrains Mono 10'
+geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
@@ -58,7 +58,7 @@ icon_theme='Hack'
 cursor_theme='LyraB'
 
 # Openbox
-ob_theme='Hack'
+ob_theme='OB-Hack'
 ob_layout='LC'
 ob_font='JetBrains Mono'
 ob_font_size='9'
@@ -75,7 +75,7 @@ dunst_offset='10x36'
 dunst_origin='top-right'
 dunst_font='Iosevka 10'
 dunst_border='1'
-dunst_separator='2'
+dunst_separator='1'
 
 # Plank
 plank_hmode='auto'
@@ -88,9 +88,9 @@ plank_zoom_percent='120'
 # Picom
 picom_backend='glx'
 picom_corner='0'
-picom_shadow_r='14'
-picom_shadow_o='0.30'
-picom_shadow_x='-12'
-picom_shadow_y='-12'
+picom_shadow_r='20'
+picom_shadow_o='0.60'
+picom_shadow_x='-20'
+picom_shadow_y='-20'
 picom_blur_method='none'
 picom_blur_strength='0'

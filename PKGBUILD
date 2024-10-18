@@ -2,7 +2,7 @@
 
 pkgname=archcraft-openbox
 pkgver=7.0
-pkgrel=0
+pkgrel=1
 pkgdesc="Openbox Configurations for Archcraft"
 arch=('any')
 url="https://github.com/archcraft-os/archcraft-openbox"
@@ -12,6 +12,7 @@ depends=('openbox' 'obconf' 'obmenu-generator' 'perl-linux-desktopfiles'
 		'pastel' 'python-pywal' 'xfce4-settings' 'xmlstarlet' 'python-lxml'
 )
 optdepends=('alacritty: default terminal emulator'
+			'kitty: secondary terminal emulator'
 			'thunar: default file manager'
 			'geany: default text editor'
 			'firefox: default web browser'
@@ -54,6 +55,7 @@ package() {
 	
 	# Copy openbox specific configs
 	cp -r "$srcdir"/alacritty 				"$_configdir"
+	cp -r "$srcdir"/kitty 					"$_configdir"
 	cp -r "$srcdir"/networkmanager-dmenu 	"$_configdir"
 	cp -r "$srcdir"/nitrogen 				"$_configdir"
 	cp -r "$srcdir"/obmenu-generator 		"$_configdir"
@@ -89,5 +91,5 @@ package() {
 	scripts_dir=(`find ${_obdir}/themes -type d | grep scripts`)
 	for _script in "${scripts_dir[@]}"; do
 		chmod +x ${_script}/*
-	done	
+	done
 }

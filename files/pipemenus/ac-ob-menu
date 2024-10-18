@@ -11,8 +11,16 @@ if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
 	exit 1
 fi
 
-config="$HOME/.config/openbox/rc.xml"
+# Vars
+idir='/usr/share/archcraft/openbox/icons'
+obdir="$HOME/.config/openbox"
+config="$obdir/rc.xml"
+menuconfig="$obdir/menu-icons.xml"
 namespace="http://openbox.org/3.4/rc"
+
+# Icons
+ICONS=(`cd $idir && ls -d */ | cut -d '/' -f1`)
+COUNT=1
 
 # Change menu file & reload OB
 ob_menu() {
@@ -20,13 +28,31 @@ ob_menu() {
 	openbox --reconfigure
 }
 
-if [[ "$1" ]]; then
-	ob_menu "$1"
+# Change icon dir & reload OB
+ob_icons() {
+	sed -i -e "s|icons \"/usr/share/archcraft/openbox/icons/.*|icons \"/usr/share/archcraft/openbox/icons/$1\">|g" "$menuconfig"
+	openbox --reconfigure
+}
+
+if [[ "$1" == '--menu' ]]; then
+	ob_menu "$2"
+elif [[ "$1" == '--icon' ]]; then
+	ob_icons "$2"
 fi
 
 menuStart
-menuItem 'Simple' "$0 menu-simple.xml"
-menuItem 'Iconic' "$0 menu-icons.xml"
-menuItem 'Glyphs' "$0 menu-glyphs.xml"
-menuItem 'Minimal' "$0 menu-minimal.xml"
+if [[ `cat $config | grep 'menu-icons.xml'` ]]; then
+	menuSubmenu "change_icons" "Change Icons"
+		menuSeparator "Available Icons"
+		for ICON in "${ICONS[@]}"; do
+			menuItem "${COUNT}. ${ICON^}" "$0 --icon $ICON"
+			COUNT=$(($COUNT+1))
+		done
+	menuSubmenuEnd
+	menuSeparator
+fi
+menuItem 'Simple' "$0 --menu menu-simple.xml"
+menuItem 'Iconic' "$0 --menu menu-icons.xml"
+menuItem 'Glyphs' "$0 --menu menu-glyphs.xml"
+menuItem 'Minimal' "$0 --menu menu-minimal.xml"
 menuEnd

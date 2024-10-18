@@ -13,11 +13,11 @@ get_volume() {
 get_icon() {
 	current="$(get_volume)"
 	if [[ ("$current" -ge "0") && ("$current" -le "30") ]]; then
-		icon=""
+		icon=""
 	elif [[ ("$current" -ge "30") && ("$current" -le "60") ]]; then
-		icon=""
+		icon=""
 	elif [[ ("$current" -ge "60") && ("$current" -le "100") ]]; then
-		icon=""
+		icon=""
 	fi
 }
 
@@ -25,7 +25,7 @@ get_icon() {
 get_status() {
 	get_icon
 	if [[ `pulsemixer --get-mute` == 1 ]]; then
-		echo ' Mute'
+		echo ' Mute'
 	else
 		echo "$icon $(get_volume)%"
 	fi

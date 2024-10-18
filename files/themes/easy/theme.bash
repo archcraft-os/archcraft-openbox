@@ -33,7 +33,7 @@ wdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 wallpaper="$wdir/wallpaper"
 
 # Polybar
-polybar_font='Iosevka Nerd Font:size=12;4'
+polybar_font='Iosevka:size=12;4'
 
 # Rofi
 rofi_font='Iosevka 10'
@@ -45,16 +45,16 @@ terminal_font_size='12'
 
 # Geany
 geany_colors='arc.conf'
-geany_font='JetBrains Mono 12'
+geany_font='JetBrainsMono Nerd Font 12'
 
 # Appearance
 gtk_font='Cantarell 12'
-gtk_theme='Arc-Easy'
+gtk_theme='Arc-Dark'
 icon_theme='Arc-Circle'
 cursor_theme='Qogirr'
 
 # Openbox
-ob_theme='Arc-Easy'
+ob_theme='OB-Arc-Easy'
 ob_layout='NLIMC'
 ob_font='JetBrains Mono'
 ob_font_size='12'
@@ -84,9 +84,9 @@ plank_zoom_percent='120'
 # Picom
 picom_backend='glx'
 picom_corner='0'
-picom_shadow_r='14'
-picom_shadow_o='0.30'
-picom_shadow_x='-12'
-picom_shadow_y='-12'
+picom_shadow_r='20'
+picom_shadow_o='0.60'
+picom_shadow_x='-20'
+picom_shadow_y='-20'
 picom_blur_method='none'
 picom_blur_strength='0'

@@ -23,13 +23,13 @@ get_icon() {
 	backlight="$(get_backlight)"
 	current="${backlight%%%}"
 	if [[ ("$current" -ge "0") && ("$current" -le "25") ]]; then
-		icon=''
+		icon=''
 	elif [[ ("$current" -ge "25") && ("$current" -le "50") ]]; then
-		icon=''
+		icon=''
 	elif [[ ("$current" -ge "50") && ("$current" -le "75") ]]; then
-		icon=''
+		icon=''
 	elif [[ ("$current" -ge "75") && ("$current" -le "100") ]]; then
-		icon=''
+		icon=''
 	fi
 }
 

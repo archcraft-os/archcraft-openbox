@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com> -->
 <!DOCTYPE menu [
-  <!ENTITY icons "/usr/share/archcraft/openbox/icons">
+  <!ENTITY icons "/usr/share/archcraft/openbox/icons/crayon">
   <!ENTITY pipes "/usr/share/archcraft/openbox/pipemenus">
 ]>
 <openbox_menu xmlns="http://openbox.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openbox.org/  file:///usr/share/openbox/menu.xsd">

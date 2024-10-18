@@ -7,7 +7,7 @@
 ESSID=`iwgetid | awk -F '"' '{ print $2 }'`
 
 if [[ ! -z "$ESSID" ]]; then
-	echo "󰤨 $ESSID"
+	echo " $ESSID"
 else
-	echo '󰤭 Disconnected'
+	echo ' Disconnected'
 fi

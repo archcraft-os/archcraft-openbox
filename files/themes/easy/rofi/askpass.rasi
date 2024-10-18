@@ -45,8 +45,8 @@ dummy {
 textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
-    str:                         "";
-    padding:                     20px 23px;
+    str:                         "";
+    padding:                     20px 22px;
     border-radius:               0px;
     background-color:            @urgent;
     text-color:                  @background;

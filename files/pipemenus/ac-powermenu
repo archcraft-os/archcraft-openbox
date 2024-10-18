@@ -25,6 +25,8 @@ confirm_cmd() {
 	rofi -dmenu \
 		-p 'Confirmation' \
 		-mesg 'Are you Sure?' \
+		-selected-row 1 \
+		-no-click-to-exit \
 		-theme ${RASI}
 }
 

@@ -25,7 +25,7 @@
   </placement>
   <!-- Theme -->
   <theme>
-    <name>Arc-Dark</name>
+    <name>OB-Arc-Dark</name>
     <titleLayout>DLIMC</titleLayout>
     <keepBorder>no</keepBorder>
     <animateIconify>yes</animateIconify>
@@ -670,6 +670,11 @@
     <keybind key="W-Return">
       <action name="Execute">
         <command>alacritty</command>
+      </action>
+    </keybind>
+    <keybind key="W-S-Return">
+      <action name="Execute">
+        <command>kitty</command>
       </action>
     </keybind>
     <keybind key="W-f">

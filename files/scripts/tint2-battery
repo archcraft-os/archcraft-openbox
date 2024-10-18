@@ -21,20 +21,20 @@ get_icon() {
 	BAT_STAT=`get_bat_stat`
 
 	if [[ "$BAT_STAT" == *"Full"* ]]; then
-		icon=''
+		icon=''
 	elif [[ "$BAT_STAT" == *"Charging"* ]]; then
-		icon=''
+		icon=''
 	else
 		if [[ ("$BAT_PREC" -ge "0") && ("$BAT_PREC" -le "20") ]]; then
-			icon=''
+			icon=''
 		elif [[ ("$BAT_PREC" -ge "20") && ("$BAT_PREC" -le "40") ]]; then
-			icon=''
+			icon=''
 		elif [[ ("$BAT_PREC" -ge "40") && ("$BAT_PREC" -le "60") ]]; then
-			icon=''
+			icon=''
 		elif [[ ("$BAT_PREC" -ge "60") && ("$BAT_PREC" -le "80") ]]; then
-			icon=''
+			icon=''
 		elif [[ ("$BAT_PREC" -ge "80") && ("$BAT_PREC" -le "100") ]]; then
-			icon=''
+			icon=''
 		fi
 	fi
 }

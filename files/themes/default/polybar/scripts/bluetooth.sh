@@ -32,7 +32,7 @@ device_connected() {
 print_status() {
     if power_on; then
 		if [[ -z `bluetoothctl info "$device" | grep "Alias" | cut -d ' ' -f 2-` ]]; then
-			echo "%{F$POWER_ON}󰂯 %{F-}Power: on"
+			echo "%{F$POWER_ON}󰂯 %{F-}On"
 		fi
 		
         paired_devices_cmd="devices Paired"
@@ -58,7 +58,7 @@ print_status() {
             fi
         done
     else
-        echo "%{F$POWER_OFF}󰂲 Power: off%{F-}"
+        echo "%{F$POWER_OFF}󰂲 Off%{F-}"
     fi
 }
 

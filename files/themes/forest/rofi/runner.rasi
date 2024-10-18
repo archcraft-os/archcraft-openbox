@@ -4,9 +4,9 @@
 
 /*****----- Configuration -----*****/
 configuration {
-	modi:                       "drun";
+	modi:                       "run";
     show-icons:                 true;
-    display-drun:               "";
+    display-drun:               "";
 	drun-display-format:        "{name}";
 }
 
@@ -69,7 +69,7 @@ prompt {
 textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
-    str:                         "";
+    str:                         "";
     background-color:            inherit;
     text-color:                  inherit;
 }
