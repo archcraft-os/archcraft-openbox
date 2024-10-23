@@ -5,6 +5,7 @@
 
 ## GENERAL --------------------------------------------------------
 
+[general]
 ## Import additional configuration files.
 import = ["~/.config/alacritty/colors.toml", "~/.config/alacritty/fonts.toml"]
 
