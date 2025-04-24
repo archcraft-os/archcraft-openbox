@@ -2,12 +2,12 @@
 
 pkgname=archcraft-openbox
 pkgver=7.0
-pkgrel=3
+pkgrel=4
 pkgdesc="Openbox Configurations for Archcraft"
 arch=('any')
 url="https://github.com/archcraft-os/archcraft-openbox"
 license=('GPL3')
-depends=('openbox' 'obconf' 'obmenu-generator' 'archcraft-openbox-themes' 'perl-linux-desktopfiles'
+depends=('openbox' 'obconf-qt' 'obmenu-generator' 'archcraft-openbox-themes' 'perl-linux-desktopfiles'
 		'pulsemixer' 'light' 'polybar' 'tint2' 'rofi' 'dunst' 'nitrogen'
 		'pastel' 'python-pywal' 'xfce4-settings' 'xmlstarlet' 'python-lxml'
 )
