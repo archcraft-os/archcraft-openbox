@@ -25,6 +25,7 @@ wm_config='openbox'
 wm_name='Openbox'
 current_config="$config_dir/$wm_config"
 updated_config="$config_dir/${wm_config}_pacnew_`date +%Y-%m-%d`"
+backup_config="$config_dir/${wm_config}_backup_`date +%Y-%m-%d`"
 
 ## -----------------------------------
 
@@ -63,6 +64,21 @@ update_wm_config() {
 	fi
 }
 
+## Backup Config files
+backup_wm_config() {
+	echo -e ${Blue}"\n[*] Backing-up your ${BBlue}${wm_name}${Blue} config files into ${BBlue}${config_dir}" ${Color_Off}
+	mv "$current_config" "$backup_config"
+	chown -R ${user_name}:${user_group} "$backup_config"
+
+	if [[ -d "$backup_config" ]]; then
+		echo -e ${Green}"[*] Your configuration files are backed-up successfully!" ${Color_Off}
+		echo -e ${Yellow}"[+] Your Backup files are stored in : ${BYellow}${backup_config}${Yellow}" ${Color_Off}		
+		echo -e ${Purple}"[*] To use your previous/modified config files, rename ${BPurple}${backup_config}${Purple} to ${BPurple}${current_config}${Purple}" ${Color_Off}		
+	else
+		echo -e ${Red}"[!] Failed to backup your configuration files!\n" ${Color_Off}
+	fi
+}
+
 ## -----------------------------------
 
 ## Main
@@ -72,6 +88,8 @@ run_main() {
 			install_wm_config
 		else
 			update_wm_config
+			#backup_wm_config
+			#install_wm_config
 		fi
 	fi
 }

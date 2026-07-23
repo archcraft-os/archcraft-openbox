@@ -2,7 +2,7 @@
 
 pkgname=archcraft-openbox
 pkgver=7.0
-pkgrel=6
+pkgrel=7
 pkgdesc="Openbox Configurations for Archcraft"
 arch=('any')
 url="https://github.com/archcraft-os/archcraft-openbox"
@@ -10,6 +10,7 @@ license=('GPL3')
 depends=('openbox' 'obconf-qt' 'obmenu-generator' 'archcraft-openbox-themes' 'perl-linux-desktopfiles'
 		'pulsemixer' 'light' 'polybar' 'tint2' 'rofi' 'dunst' 'nitrogen'
 		'pastel' 'python-pywal' 'xfce4-settings' 'xmlstarlet' 'python-lxml'
+		'lead-git' 'skippy-xd-git'
 )
 optdepends=('alacritty: default terminal emulator'
 			'kitty: secondary terminal emulator'
@@ -56,10 +57,12 @@ package() {
 	# Copy openbox specific configs
 	cp -r "$srcdir"/alacritty 				"$_configdir"
 	cp -r "$srcdir"/kitty 					"$_configdir"
+	cp -r "$srcdir"/lead 					"$_configdir"
 	cp -r "$srcdir"/networkmanager-dmenu 	"$_configdir"
 	cp -r "$srcdir"/nitrogen 				"$_configdir"
 	cp -r "$srcdir"/obmenu-generator 		"$_configdir"
 	cp -r "$srcdir"/plank 					"$_configdir"
+	cp -r "$srcdir"/skippy-xd 				"$_configdir"
 
 	# Copy window manager configs
 	install -Dm 755 autostart   			"$_obdir"/autostart

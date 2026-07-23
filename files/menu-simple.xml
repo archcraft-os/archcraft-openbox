@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2020-2025 Aditya Shakya <adi1090x@gmail.com> -->
+<!-- Copyright (C) 2020-2026 Aditya Shakya <adi1090x@gmail.com> -->
 <!DOCTYPE menu [
   <!ENTITY pipes "/usr/share/archcraft/openbox/pipemenus">
 ]>
@@ -74,6 +74,11 @@
 			<menu id="FontPipeMenu" execute="&pipes;/ac-change-fonts" label="Change Font"/>
 			<menu id="SchemePipeMenu" execute="&pipes;/ac-change-scheme" label="Terminal Colors"/>
 			<separator/>
+			<item label="Reload Theme">
+				<action name="Execute">
+					<command>archcraft-reload-theme</command>
+				</action>
+			</item>
 			<item label="Change Wallpaper">
 				<action name="Execute">
 					<command>nitrogen</command>

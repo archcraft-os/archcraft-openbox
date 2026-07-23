@@ -1,54 +1,109 @@
 #!/usr/bin/env bash
 
-## Copyright (C) 2020-2025 Aditya Shakya <adi1090x@gmail.com>
+## Copyright (C) 2020-2026 Aditya Shakya <adi1090x@gmail.com>
 
-## Kill if already running
-killall -9 xfsettingsd picom polybar mpd dunst ksuperkey xfce4-power-manager
+# Helper Functions ------------------------------------------
+# Usage:
+#
+#   run     <command>    -> Start only if not already running (daemons).
+#   run_bg  <command>    -> Always execute (one-shot commands/scripts).
+#   restart <command>    -> Gracefully restart a running daemon.
 
-## Restore Wallpaper
+# Check whether a process is already running.
+is_running() {
+	pgrep -x "${1##*/}" >/dev/null 2>&1
+}
+
+# Start a daemon only if it is not already running.
+run() {
+	if ! is_running "$1"; then
+		"$@" >/dev/null 2>&1 &
+	fi
+}
+
+# Run a command unconditionally.
+run_bg() {
+	"$@" >/dev/null 2>&1 &
+}
+
+# Restart a running process gracefully.
+restart() {
+	local proc="${1##*/}"
+
+	if is_running "$proc"; then
+		pkill -TERM -x "$proc"
+
+		while is_running "$proc"; do
+			sleep 0.1
+		done
+	fi
+
+	"$@" >/dev/null 2>&1 &
+}
+
+# Appearance ------------------------------------------------
+
+# Restore wallpaper
 nitrogen --restore
 
-## xfce4-settings daemon
-xfsettingsd &
+# Launch Polybar or Tint2
+run_bg ~/.config/openbox/themes/launch-bar.sh
 
-## polkit agent
-if [[ ! `pidof xfce-polkit` ]]; then
-	/usr/lib/xfce-polkit/xfce-polkit &
-fi
+# Compositor
+restart picom
 
-## Enable power management
-xfce4-power-manager &
+# Dock
+run plank
 
-## Start Compositing Manager
-exec picom &
+# Desktop Services ------------------------------------------
 
-## Launch Polybar or Tint2
-bash ~/.config/openbox/themes/launch-bar.sh
+# XFCE settings daemon (themes, fonts, icons, cursor, DPI...)
+run xfsettingsd
 
-## Notification Daemon
-exec dunst &
+# Power manager
+run xfce4-power-manager
 
-## Start Music Player Daemon
-exec mpd &
+# PolicyKit authentication agent
+run /usr/lib/xfce-polkit/xfce-polkit
 
-## Launch Plank
-exec plank &
+# Notification daemon
+restart dunst
 
-## Thunar Daemon
-exec thunar --daemon &
+# Music Player Daemon
+run mpd
 
-## Enable Super Keys For Menu
-ksuperkey -e 'Super_L=Alt_L|F1' &
-ksuperkey -e 'Super_R=Alt_L|F1' &
+# Thunar daemon
+run thunar --daemon
 
-## These applets are specifically for tint2 panel.
-## If you're using tint2 as panel, Uncomment these applets.
+# Hot Corners -----------------------------------------------
 
-## User Friendly Network Menu
-#nm-applet --indicator &
+# Creates sensors for each configured corner
+run lead
 
-## User Friendly Bluetooth Menu
-#blueman-applet &
+# Start skippy-xd (X11 window selector) as daemon
+run skippy-xd --start-daemon
+
+# Keyboard --------------------------------------------------
+
+# Enable Super key to open the application menu
+run ksuperkey -e 'Super_L=Alt_L|F1'
+run ksuperkey -e 'Super_R=Alt_L|F1'
+
+# Optional Applets ------------------------------------------
+
+# These applets are specifically for tint2 panel.
+# If you're using tint2 as panel, Uncomment these applets.
+
+# Network Manager
+# run nm-applet --indicator
+
+# Bluetooth
+# run blueman-applet
+
+# Optional Commands -----------------------------------------
+
+# Reload theme after monitor configuration changes
+# run_bg sh -c "sleep 1.5 && archcraft-reload-theme"
 
 ## Welcome-App-Run-Once
 archcraft-welcome &
