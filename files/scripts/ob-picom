@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+## Copyright (C) 2020-2026 Aditya Shakya <adi1090x@gmail.com>
+
+# directory
+DIR="$HOME/.config"
+
+# Terminate if picom is already running
+pkill -TERM -x picom 2>/dev/null
+
+# Wait until picom exits
+while pgrep -x picom >/dev/null 2>&1; do
+	sleep 0.1
+done
+
+# Defaults
+backend="glx"
+extra_args=()
+
+# VirtualBox compatibility
+case "$(systemd-detect-virt 2>/dev/null || true)" in
+	oracle)
+		extra_args+=(--no-vsync)
+
+		# Use GLX only when VirtualBox 3D acceleration is available
+		if glxinfo -B 2>/dev/null | grep -qiE 'llvmpipe|softpipe'; then
+			backend="xrender"
+			extra_args+=(--no-use-damage)
+		fi
+		;;
+esac
+
+# Launch picom
+exec picom \
+    --config "$DIR/picom.conf" \
+    --backend "$backend" \
+    "${extra_args[@]}"

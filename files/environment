@@ -6,3 +6,6 @@ PATH="$HOME/.config/openbox/scripts:$PATH"; export PATH
 
 ## Other
 XDG_CURRENT_DESKTOP='openbox'; export XDG_CURRENT_DESKTOP
+
+## Disable CSD
+LD_PRELOAD=/usr/lib/libgtk-nocsd.so; export LD_PRELOAD

@@ -53,6 +53,7 @@ geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
+gtk_colors='prefer-dark'
 gtk_theme='Hack'
 icon_theme='Hack'
 cursor_theme='LyraB'

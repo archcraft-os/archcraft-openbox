@@ -50,7 +50,7 @@ nitrogen --restore
 run_bg ~/.config/openbox/themes/launch-bar.sh
 
 # Compositor
-restart picom
+run_bg ~/.config/openbox/scripts/ob-picom
 
 # Dock
 run plank
@@ -106,5 +106,5 @@ run ksuperkey -e 'Super_R=Alt_L|F1'
 # run_bg sh -c "sleep 1.5 && archcraft-reload-theme"
 
 ## Welcome-App-Run-Once
-archcraft-welcome &
+/usr/share/archcraft/welcome/run.py &
 sed -i -e '/## Welcome-App-Run-Once/Q' "$HOME"/.config/openbox/autostart

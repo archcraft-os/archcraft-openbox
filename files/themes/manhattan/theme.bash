@@ -52,6 +52,7 @@ geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
+gtk_colors='prefer-dark'
 gtk_theme='Manhattan'
 icon_theme='Luv-Folders-Dark'
 cursor_theme='Vimix-Dark'

@@ -49,6 +49,7 @@ geany_font='JetBrainsMono Nerd Font 12'
 
 # Appearance
 gtk_font='Cantarell 12'
+gtk_colors='prefer-dark'
 gtk_theme='Arc-Dark'
 icon_theme='Arc-Circle'
 cursor_theme='Qogirr'

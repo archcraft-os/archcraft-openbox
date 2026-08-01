@@ -49,6 +49,7 @@ geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
+gtk_colors='prefer-dark'
 gtk_theme='Adapta-Nokto'
 icon_theme='Archcraft-Dark'
 cursor_theme='Pear'

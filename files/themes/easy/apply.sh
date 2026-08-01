@@ -225,6 +225,10 @@ apply_appearance() {
 	if [[ -f "$HOME"/.icons/default/index.theme ]]; then
 		sed -i -e "s/Inherits=.*/Inherits=$cursor_theme/g" "$HOME"/.icons/default/index.theme
 	fi	
+
+	# set color scheme for gnome apps
+	gsettings set org.gnome.desktop.interface color-scheme "'$gtk_colors'"
+	gsettings set org.x.apps.portal color-scheme "'$gtk_colors'"
 }
 
 # Openbox -----------------------------------

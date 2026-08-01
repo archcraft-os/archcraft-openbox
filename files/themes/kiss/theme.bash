@@ -54,6 +54,7 @@ geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
+gtk_colors='prefer-light'
 gtk_theme='White'
 icon_theme='Zafiro-Dark'
 cursor_theme='Qogirr'

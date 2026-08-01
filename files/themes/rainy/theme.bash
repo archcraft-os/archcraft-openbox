@@ -49,6 +49,7 @@ geany_font='JetBrainsMono Nerd Font 10'
 
 # Appearance
 gtk_font='Noto Sans 9'
+gtk_colors='prefer-light'
 gtk_theme='Arc'
 icon_theme='Arc-Circle'
 cursor_theme='Future'
