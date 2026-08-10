@@ -27,6 +27,9 @@ current_config="$config_dir/$wm_config"
 updated_config="$config_dir/${wm_config}_pacnew_`date +%Y-%m-%d`"
 backup_config="$config_dir/${wm_config}_backup_`date +%Y-%m-%d`"
 
+## Config files
+wm_cfg_files=(alacritty kitty lead 'networkmanager-dmenu' nitrogen 'obmenu-generator' plank 'skippy-xd')
+
 ## -----------------------------------
 
 ## Copy terminal config in /root
@@ -40,6 +43,13 @@ install_wm_config() {
 	mkdir -p "$current_config"
 	cp -rf "$skel_dir/$wm_config"/* "$current_config"/
 	chown -R ${user_name}:${user_group} "$current_config"
+
+	for _cfg in "${wm_cfg_files[@]}"; do
+		if [[ -e "$skel_dir/$_cfg" ]]; then
+			cp -rf "$skel_dir/$_cfg" "$config_dir"/
+			chown -R ${user_name}:${user_group} "$config_dir/$_cfg"
+		fi
+	done
 
 	if [[ -d "$current_config" ]]; then
 		echo -e ${Green}"[*] Configuration files installed successfully!\n" ${Color_Off}
@@ -55,6 +65,13 @@ update_wm_config() {
 	cp -rf "$skel_dir/$wm_config"/* "$updated_config"/
 	chown -R ${user_name}:${user_group} "$updated_config"
 
+	for _cfg in "${wm_cfg_files[@]}"; do
+		if [[ -e "$config_dir/$_cfg" ]]; then
+			cp -rf "$skel_dir/$_cfg" "$config_dir"/"${_cfg}_pacnew_`date +%Y-%m-%d`"
+			chown -R ${user_name}:${user_group} "$config_dir/${_cfg}_pacnew_`date +%Y-%m-%d`"
+		fi
+	done
+
 	if [[ -d "$updated_config" ]]; then
 		echo -e ${Green}"[*] Latest configuration files installed successfully!" ${Color_Off}
 		echo -e ${Yellow}"[+] Latest config files are stored in : ${BYellow}${updated_config}${Yellow}" ${Color_Off}		
@@ -69,6 +86,13 @@ backup_wm_config() {
 	echo -e ${Blue}"\n[*] Backing-up your ${BBlue}${wm_name}${Blue} config files into ${BBlue}${config_dir}" ${Color_Off}
 	mv "$current_config" "$backup_config"
 	chown -R ${user_name}:${user_group} "$backup_config"
+
+	for _cfg in "${wm_cfg_files[@]}"; do
+		if [[ -e "$config_dir/$_cfg" ]]; then
+			mv "$config_dir/$_cfg" "$config_dir"/"${_cfg}_backup_`date +%Y-%m-%d`"
+			chown -R ${user_name}:${user_group} "$config_dir/${_cfg}_backup_`date +%Y-%m-%d`"
+		fi
+	done
 
 	if [[ -d "$backup_config" ]]; then
 		echo -e ${Green}"[*] Your configuration files are backed-up successfully!" ${Color_Off}
