@@ -59,26 +59,20 @@ HOME = os.path.expanduser('~')
 RCFILE = '.ob-randrrc'
 
 def mk_exe_node(output, name, command):
-    """A small helper to speed the three-element PITA that is the OpenBox
-    execute menu syntax.
-
+    """Create an OpenBox menu item that executes an xrandr command
+    followed by the Archcraft theme reload.
     """
-    CMD = 'xrandr --output %s ' % output
-    CMD_1 = 'nitrogen --restore'
-    CMD_2 = '~/.config/openbox/themes/launch-bar.sh'
-
-    # Apply Mode
     item = etree.Element('item', label=name)
-    action = etree.SubElement(item, 'action', name='execute')
-    etree.SubElement(action, 'command').text = CMD + command
 
-    # Fix Wallpaper : Restore
+    # Apply xrandr change
     action = etree.SubElement(item, 'action', name='execute')
-    etree.SubElement(action, 'command').text = CMD_1
+    etree.SubElement(action, 'command').text = \
+        'xrandr --output %s %s' % (output, command)
 
-    # Fix Polybar : Relaunch
+    # Reload Archcraft theme
     action = etree.SubElement(item, 'action', name='execute')
-    etree.SubElement(action, 'command').text = CMD_2
+    etree.SubElement(action, 'command').text = \
+        'archcraft-reload-theme'
 
     return item
 
@@ -96,8 +90,16 @@ def get_rc_menu():
             command = config.get(i, name)
 
             item = etree.SubElement(menu, 'item', label=name)
+
+            # Apply xrandr command
             action = etree.SubElement(item, 'action', name='execute')
-            etree.SubElement(action, 'command').text = 'xrandr ' + command
+            etree.SubElement(action, 'command').text = \
+                'xrandr ' + command
+
+            # Reload Archcraft theme
+            action = etree.SubElement(item, 'action', name='execute')
+            etree.SubElement(action, 'command').text = \
+                'archcraft-reload-theme'
 
         menus.append(menu)
 
@@ -214,7 +216,7 @@ def get_xml():
         elif ' disconnected' in i:
             # TV disconnected (normal left inverted right x axis y axis)
             text = i.replace(' disconnected', '')
-            text = text.partition('(')[0]
+            text = text.partition('(')[0].strip()
             name, extra = (lambda x: (x[0], x[1:]))(text.split(' '))
 
             etree.SubElement(root, 'item', label=name)
@@ -223,8 +225,12 @@ def get_xml():
     etree.SubElement(root, 'separator', label='Shortcuts')
 
     auto = etree.SubElement(root, 'item', label='Automatic')
+    
     auto_action = etree.SubElement(auto, 'action', name='execute')
     etree.SubElement(auto_action, 'command').text = 'xrandr --auto'
+    
+    reload_action = etree.SubElement(auto, 'action', name='execute')
+    etree.SubElement(reload_action, 'command').text = 'archcraft-reload-theme'
 
     # Populate position menus
     for output in outputs.keys():

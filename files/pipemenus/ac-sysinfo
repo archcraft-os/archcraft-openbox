@@ -4,77 +4,853 @@
 ##
 ## Openbox Pipemenu to display system stats/info
 
-# Variables and functions
 MENUS_LIBDIR='/usr/share/archcraft/openbox/menulib'
-if ! . "$MENUS_LIBDIR/archcraft.cfg" 2> /dev/null; then
-	echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
-	exit 1
+
+if ! . "$MENUS_LIBDIR/archcraft.cfg" 2>/dev/null; then
+    echo "Error: Failed to locate archcraft.cfg in $MENUS_LIBDIR" >&2
+    exit 1
 fi
 
-##-- OS ------------------------
-os=`uname -o`
+# ----------------------------------------------------------------------
+# Helpers
+# ----------------------------------------------------------------------
 
-##-- DISTRO ------------------------
-distro=`cat /etc/os-release | grep NAME= | head -n1 | cut -d'=' -f2 | tr -d \"`
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
 
-##-- KERNEL ------------------------
-kernel=`uname -sr`
+# ----------------------------------------------------------------------
+# Basic system information
+# ----------------------------------------------------------------------
 
-##-- MACHINE ------------------------
-machine=`uname -m`
+get_distro() {
+    local pretty_name='Linux'
 
-##-- CPU ------------------------
-cpu=`cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2 | uniq`
+    if [[ -r /etc/os-release ]]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release
+        pretty_name=${PRETTY_NAME:-${NAME:-Linux}}
+    fi
 
-##-- MEMORY ------------------------
-m_total="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f2`MB"
-m_used="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f3`MB"
-m_free="`free -m | grep 'Mem' | tr -s '[:blank:]' | cut -d' ' -f4`MB"
+    printf '%s' "$pretty_name"
+}
 
-##-- SWAP ------------------------
-s_total="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f2`MB"
-s_used="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f3`MB"
-s_free="`free -m | grep 'Swap' | tr -s '[:blank:]' | cut -d' ' -f4`MB"
-swappiness="`cat /proc/sys/vm/swappiness`%"
+get_init() {
+    if [[ -r /proc/1/comm ]]; then
+        cat /proc/1/comm
+    else
+        printf 'Unknown'
+    fi
+}
 
-##-- INIT ------------------------
-init=`cat /proc/1/comm`
+get_virtualization() {
+    local virt
 
-##-- BATTERY ------------------------
-b_stat=`acpi -b | grep Battery | cut -d' ' -f3 | tr -d ,`
-b_perc=`acpi -b | grep Battery | cut -d' ' -f4 | tr -d ,`
-b_cap=`acpi -i | tail -n1 | cut -d'=' -f2 | tr -d "[:blank:]"`
+    if command_exists systemd-detect-virt; then
+        virt=$(systemd-detect-virt 2>/dev/null || true)
 
-##-- BACKLIGHT ------------------------
-g_card=`ls /sys/class/backlight | head -n1`
-b_value=`cat /sys/class/backlight/$g_card/brightness`
-backlight="$(($b_value*100/255))%"
+        if [[ -n "$virt" && "$virt" != "none" ]]; then
+            printf '%s' "$virt"
+            return
+        fi
+    fi
 
-##-- UPTIME ------------------------
-uptime=`uptime -p | awk '{print $2 " " $3 " " $4 " " $5}'`
+    printf 'None'
+}
 
-##-- LOAD ------------------------
-load=`cat /proc/loadavg`
+# ----------------------------------------------------------------------
+# CPU
+# ----------------------------------------------------------------------
 
-##-- WIFI ------------------------
-interface=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f1`
-type=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f2`
-status=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f3`
-ssid=`nmcli device status | grep "wifi" | tr -s '[:blank:]' | cut -d' ' -f4`
+# Query lscpu only once.
+CPU_INFO=$(lscpu 2>/dev/null || true)
 
-##-- MENU ------------------------
+get_cpu() {
+    local model
+
+    model=$(awk -F: '
+        /^Model name:/ {
+            sub(/^[[:space:]]+/, "", $2)
+            print $2
+            exit
+        }
+    ' <<< "$CPU_INFO")
+
+    if [[ -z "$model" && -r /proc/cpuinfo ]]; then
+        model=$(awk -F': ' '
+            /^model name/ {
+                print $2
+                exit
+            }
+        ' /proc/cpuinfo)
+    fi
+
+    printf '%s' "${model:-Unknown}"
+}
+
+get_cpu_cores() {
+    local cores sockets
+
+    cores=$(awk -F: '
+        /^Core\(s\) per socket:/ {
+            gsub(/[[:space:]]/, "", $2)
+            print $2
+            exit
+        }
+    ' <<< "$CPU_INFO")
+
+    sockets=$(awk -F: '
+        /^Socket\(s\):/ {
+            gsub(/[[:space:]]/, "", $2)
+            print $2
+            exit
+        }
+    ' <<< "$CPU_INFO")
+
+    if [[ -n "$cores" && -n "$sockets" ]]; then
+        printf '%s' "$((cores * sockets))"
+    else
+        nproc --all 2>/dev/null || printf 'N/A'
+    fi
+}
+
+get_cpu_threads() {
+    local threads
+
+    threads=$(awk -F: '
+        /^CPU\(s\):/ {
+            gsub(/[[:space:]]/, "", $2)
+            print $2
+            exit
+        }
+    ' <<< "$CPU_INFO")
+
+    printf '%s' "${threads:-$(nproc --all 2>/dev/null || echo N/A)}"
+}
+
+get_cpu_frequency() {
+    local cpu file freq
+    local total=0
+    local count=0
+
+    # scaling_cur_freq is normally in kHz.
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
+        file="$cpu/cpufreq/scaling_cur_freq"
+
+        if [[ -r "$file" ]]; then
+            freq=$(<"$file")
+
+            if [[ "$freq" =~ ^[0-9]+$ ]]; then
+                total=$((total + freq))
+                ((count++))
+            fi
+        fi
+    done
+
+    if (( count > 0 )); then
+        printf '%d MHz' "$((total / count / 1000))"
+        return
+    fi
+
+    # Fallback: /proc/cpuinfo
+    if [[ -r /proc/cpuinfo ]]; then
+        freq=$(awk '
+            /cpu MHz/ {
+                total += $4
+                count++
+            }
+            END {
+                if (count > 0)
+                    printf "%.0f", total / count
+            }
+        ' /proc/cpuinfo)
+
+        if [[ -n "$freq" ]]; then
+            printf '%s MHz' "$freq"
+            return
+        fi
+    fi
+
+    printf 'N/A'
+}
+
+get_cpu_driver() {
+    local file='/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver'
+
+    if [[ -r "$file" ]]; then
+        cat "$file"
+    else
+        printf 'N/A'
+    fi
+}
+
+get_cpu_governor() {
+    local file='/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'
+
+    if [[ -r "$file" ]]; then
+        cat "$file"
+    else
+        printf 'N/A'
+    fi
+}
+
+# ----------------------------------------------------------------------
+# GPU
+# ----------------------------------------------------------------------
+
+# Query lspci only once.
+GPU_INFO=$(lspci -k 2>/dev/null || true)
+
+get_gpu() {
+    local gpu
+
+    gpu=$(awk '
+        /VGA compatible controller|3D controller|Display controller/ {
+            line=$0
+
+            # Remove PCI address.
+            sub(/^[^ ]+ /, "", line)
+
+            # Remove controller type.
+            sub(/^[^:]+: /, "", line)
+
+            # Remove revision.
+            sub(/ \(rev [^)]+\)$/, "", line)
+
+            print line
+        }
+    ' <<< "$GPU_INFO" | paste -sd ' / ' -)
+
+    printf '%s' "${gpu:-Unknown}"
+}
+
+get_gpu_driver() {
+    local driver
+
+    driver=$(awk '
+        /VGA compatible controller|3D controller|Display controller/ {
+            in_gpu=1
+            next
+        }
+
+        in_gpu && /Kernel driver in use:/ {
+            sub(/^.*: /, "")
+            print
+            in_gpu=0
+            next
+        }
+
+        /^[^[:space:]]/ {
+            in_gpu=0
+        }
+    ' <<< "$GPU_INFO" | paste -sd ' / ' -)
+
+    printf '%s' "${driver:-Unknown}"
+}
+
+get_opengl_renderer() {
+    local renderer
+
+    if command_exists glxinfo; then
+        renderer=$(glxinfo -B 2>/dev/null |
+            awk -F': ' '
+                /^OpenGL renderer string:/ {
+                    print $2
+                    exit
+                }
+            ')
+    fi
+
+    printf '%s' "${renderer:-N/A}"
+}
+
+# ----------------------------------------------------------------------
+# Memory
+# ----------------------------------------------------------------------
+
+MEMORY_INFO=$(free -m 2>/dev/null || true)
+
+get_memory() {
+    local total used percent
+
+    read -r total used < <(
+        awk '/^Mem:/ {
+            print $2, $3
+            exit
+        }' <<< "$MEMORY_INFO"
+    )
+
+    if [[ -z "$total" || "$total" -eq 0 ]]; then
+        printf 'N/A'
+        return
+    fi
+
+    percent=$((used * 100 / total))
+
+    printf '%sMB / %sMB (%s%%)' "$used" "$total" "$percent"
+}
+
+get_swap() {
+    local total used percent
+
+    read -r total used < <(
+        awk '/^Swap:/ {
+            print $2, $3
+            exit
+        }' <<< "$MEMORY_INFO"
+    )
+
+    if [[ -z "$total" || "$total" -eq 0 ]]; then
+        printf 'Disabled'
+        return
+    fi
+
+    percent=$((used * 100 / total))
+
+    printf '%sMB / %sMB (%s%%)' "$used" "$total" "$percent"
+}
+
+get_swappiness() {
+    if [[ -r /proc/sys/vm/swappiness ]]; then
+        printf '%s%%' "$(< /proc/sys/vm/swappiness)"
+    else
+        printf 'N/A'
+    fi
+}
+
+# ----------------------------------------------------------------------
+# Storage
+# ----------------------------------------------------------------------
+
+get_disk() {
+    local total used available percent
+
+    read -r total used available percent < <(
+        df -hP / 2>/dev/null |
+            awk 'NR == 2 {
+                print $2, $3, $4, $5
+            }'
+    )
+
+    if [[ -z "$total" ]]; then
+        printf 'N/A'
+        return
+    fi
+
+    printf '%s / %s (%s)' "$used" "$total" "$percent"
+}
+
+# ----------------------------------------------------------------------
+# Display / Session
+# ----------------------------------------------------------------------
+
+get_resolution() {
+    local resolution
+
+    if command_exists xrandr; then
+        resolution=$(xrandr 2>/dev/null |
+            awk '
+                / connected primary/ {
+                    if (match($0, /[0-9]+x[0-9]+\+[0-9]+\+[0-9]+/)) {
+                        value=substr($0, RSTART, RLENGTH)
+                        sub(/\+.*/, "", value)
+                        print value
+                        exit
+                    }
+                }
+
+                / connected/ {
+                    if (match($0, /[0-9]+x[0-9]+\+[0-9]+\+[0-9]+/)) {
+                        value=substr($0, RSTART, RLENGTH)
+                        sub(/\+.*/, "", value)
+                        print value
+                        exit
+                    }
+                }
+            ')
+    fi
+
+    printf '%s' "${resolution:-N/A}"
+}
+
+get_session() {
+    printf '%s' "${XDG_SESSION_TYPE:-N/A}"
+}
+
+get_desktop() {
+    printf '%s' "${XDG_CURRENT_DESKTOP:-N/A}"
+}
+
+get_window_manager() {
+    local wm
+
+    if command_exists wmctrl; then
+        wm=$(wmctrl -m 2>/dev/null |
+            awk -F': ' '
+                /^Name:/ {
+                    print $2
+                    exit
+                }
+            ')
+    fi
+
+    if [[ -z "$wm" ]]; then
+        if pgrep -x openbox >/dev/null 2>&1; then
+            wm='Openbox'
+        fi
+    fi
+
+    printf '%s' "${wm:-N/A}"
+}
+
+get_compositor() {
+    if pgrep -x picom >/dev/null 2>&1; then
+        printf 'Picom'
+    elif pgrep -x xcompmgr >/dev/null 2>&1; then
+        printf 'Xcompmgr'
+    elif pgrep -x compton >/dev/null 2>&1; then
+        printf 'Compton'
+    else
+        printf 'None'
+    fi
+}
+
+# ----------------------------------------------------------------------
+# Network
+# ----------------------------------------------------------------------
+
+get_wifi() {
+    local interface connection
+    local ssid signal frequency bitrate
+
+    if ! command_exists nmcli; then
+        printf 'N/A'
+        return
+    fi
+
+    # Do NOT use "nmcli dev wifi" here.
+    # That can trigger/wait for a Wi-Fi scan.
+    IFS=: read -r interface type state connection < <(
+        nmcli -t -f DEVICE,TYPE,STATE,CONNECTION device status 2>/dev/null |
+            awk -F: '
+                $2 == "wifi" && $3 == "connected" {
+                    print
+                    exit
+                }
+            '
+    )
+
+    if [[ -z "$interface" ]]; then
+        printf 'Disconnected'
+        return
+    fi
+
+    ssid="$connection"
+    signal=''
+    frequency=''
+    bitrate=''
+
+    # Query the currently associated AP only.
+    # No scan is performed.
+	if command_exists iw; then
+		local iw_info
+	
+		iw_info=$(iw dev "$interface" link 2>/dev/null || true)
+	
+		ssid=$(awk -F': ' '
+			/^[[:space:]]*SSID:/ {
+				print $2
+				exit
+			}
+		' <<< "$iw_info")
+	
+		signal=$(awk -F': ' '
+			/^[[:space:]]*signal:/ {
+				print $2
+				exit
+			}
+		' <<< "$iw_info")
+	
+		frequency=$(awk -F': ' '
+			/^[[:space:]]*freq:/ {
+				print $2
+				exit
+			}
+		' <<< "$iw_info")
+	
+		bitrate=$(awk -F': ' '
+			/^[[:space:]]*tx bitrate:/ {
+				print $2
+				exit
+			}
+		' <<< "$iw_info")
+	fi
+
+    ssid=${ssid:-$connection}
+    signal=${signal:-N/A}
+    frequency=${frequency:-N/A}
+    bitrate=${bitrate:-N/A}
+
+    printf '%s ∙ %s ∙ %s ∙ %s ∙ %s' \
+        "$interface" \
+        "$ssid" \
+        "$signal" \
+        "$frequency MHz" \
+        "$bitrate"
+}
+
+get_ip() {
+    local ip
+
+    ip=$(ip -4 addr show scope global 2>/dev/null |
+        awk '/inet / {
+            sub(/\/.*/, "", $2)
+            print $2
+            exit
+        }')
+
+    printf '%s' "${ip:-N/A}"
+}
+
+# ----------------------------------------------------------------------
+# Power
+# ----------------------------------------------------------------------
+
+BATTERY_DEVICE=''
+
+get_battery_device() {
+    if [[ -n "$BATTERY_DEVICE" ]]; then
+        printf '%s' "$BATTERY_DEVICE"
+        return
+    fi
+
+    BATTERY_DEVICE=$(
+        for device in /sys/class/power_supply/BAT*; do
+            [[ -e "$device" ]] || continue
+            printf '%s' "$device"
+            break
+        done
+    )
+
+    printf '%s' "$BATTERY_DEVICE"
+}
+
+get_battery() {
+    local battery status capacity
+
+    battery=$(get_battery_device)
+
+    if [[ -z "$battery" ]]; then
+        printf 'N/A'
+        return
+    fi
+
+    status=$(<"$battery/status")
+    capacity=$(<"$battery/capacity")
+
+    printf '%s%% ∙ %s' "$capacity" "$status"
+}
+
+get_battery_health() {
+    local battery full design health
+
+    battery=$(get_battery_device)
+
+    if [[ -z "$battery" ]]; then
+        printf 'N/A'
+        return
+    fi
+
+    if [[ -r "$battery/energy_full" &&
+          -r "$battery/energy_full_design" ]]; then
+
+        full=$(<"$battery/energy_full")
+        design=$(<"$battery/energy_full_design")
+
+    elif [[ -r "$battery/charge_full" &&
+            -r "$battery/charge_full_design" ]]; then
+
+        full=$(<"$battery/charge_full")
+        design=$(<"$battery/charge_full_design")
+
+    else
+        printf 'N/A'
+        return
+    fi
+
+    if (( design > 0 )); then
+        health=$((full * 100 / design))
+
+        # Some fuel gauges report slightly above design capacity.
+        (( health > 100 )) && health=100
+
+        printf '%s%%' "$health"
+    else
+        printf 'N/A'
+    fi
+}
+
+BACKLIGHT_DEVICE=''
+
+get_backlight_device() {
+    if [[ -n "$BACKLIGHT_DEVICE" ]]; then
+        printf '%s' "$BACKLIGHT_DEVICE"
+        return
+    fi
+
+    BACKLIGHT_DEVICE=$(
+        for device in /sys/class/backlight/*; do
+            [[ -e "$device" ]] || continue
+            printf '%s' "$device"
+            break
+        done
+    )
+
+    printf '%s' "$BACKLIGHT_DEVICE"
+}
+
+get_backlight() {
+    local device brightness maximum percent
+
+    device=$(get_backlight_device)
+
+    if [[ -z "$device" ]]; then
+        printf 'N/A'
+        return
+    fi
+
+    brightness=$(<"$device/brightness")
+    maximum=$(<"$device/max_brightness")
+
+    if (( maximum > 0 )); then
+        percent=$((brightness * 100 / maximum))
+        printf '%s%%' "$percent"
+    else
+        printf 'N/A'
+    fi
+}
+
+get_power_profile() {
+    local profile
+
+    if ! command_exists powerprofilesctl; then
+        printf 'N/A'
+        return
+    fi
+
+    profile=$(powerprofilesctl get 2>/dev/null)
+
+    printf '%s' "${profile:-N/A}"
+}
+
+# ----------------------------------------------------------------------
+# General
+# ----------------------------------------------------------------------
+
+get_uptime() {
+    if command_exists uptime; then
+        uptime -p 2>/dev/null || printf 'Unknown'
+    else
+        printf 'Unknown'
+    fi
+}
+
+get_load() {
+    if [[ -r /proc/loadavg ]]; then
+        awk '{print $1 " ∙ " $2 " ∙ " $3}' /proc/loadavg
+    else
+        printf 'N/A'
+    fi
+}
+
+get_shell() {
+    printf '%s' "${SHELL##*/}"
+}
+
+get_datetime() {
+    date +'%I:%M %p, %b %d %Y'
+}
+
+# ----------------------------------------------------------------------
+# Gather information
+# ----------------------------------------------------------------------
+
+USER_NAME="${USER:-$(id -un)}"
+HOST_NAME="${HOSTNAME:-$(hostname)}"
+
+DISTRO=$(get_distro)
+KERNEL=$(uname -sr)
+MACHINE=$(uname -m)
+INIT=$(get_init)
+VIRTUALIZATION=$(get_virtualization)
+
+CPU=$(get_cpu)
+CPU_CORES=$(get_cpu_cores)
+CPU_THREADS=$(get_cpu_threads)
+CPU_FREQUENCY=$(get_cpu_frequency)
+CPU_DRIVER=$(get_cpu_driver)
+CPU_GOVERNOR=$(get_cpu_governor)
+
+GPU=$(get_gpu)
+GPU_DRIVER=$(get_gpu_driver)
+OPENGL_RENDERER=$(get_opengl_renderer)
+
+MEMORY=$(get_memory)
+SWAP=$(get_swap)
+SWAPPINESS=$(get_swappiness)
+DISK=$(get_disk)
+
+RESOLUTION=$(get_resolution)
+SESSION=$(get_session)
+DESKTOP=$(get_desktop)
+WINDOW_MANAGER=$(get_window_manager)
+COMPOSITOR=$(get_compositor)
+
+WIFI=$(get_wifi)
+IP_ADDRESS=$(get_ip)
+
+BATTERY=$(get_battery)
+BATTERY_HEALTH=$(get_battery_health)
+BACKLIGHT=$(get_backlight)
+POWER_PROFILE=$(get_power_profile)
+
+UPTIME=$(get_uptime)
+LOAD=$(get_load)
+SHELL_NAME=$(get_shell)
+DATETIME=$(get_datetime)
+
+# ----------------------------------------------------------------------
+# Complete system report
+# ----------------------------------------------------------------------
+
+SYSINFO=$(cat <<EOF
+$USER_NAME@$HOST_NAME | $DATETIME
+
+SYSTEM
+OS           : $DISTRO
+KERNEL       : $KERNEL
+ARCH         : $MACHINE
+INIT         : $INIT
+VIRTUAL      : $VIRTUALIZATION
+
+HARDWARE
+CPU          : $CPU
+CPU CORES    : $CPU_CORES ∙ Threads $CPU_THREADS
+CPU FREQ     : $CPU_FREQUENCY
+CPU DRIVER   : $CPU_DRIVER
+CPU GOVERNOR : $CPU_GOVERNOR
+GPU          : $GPU
+GPU DRIVER   : $GPU_DRIVER
+OPENGL       : $OPENGL_RENDERER
+MEMORY       : $MEMORY
+SWAP         : $SWAP ∙ Swappiness $SWAPPINESS
+DISK         : $DISK
+
+SESSION
+DISPLAY      : $RESOLUTION
+SESSION      : $SESSION
+WM           : $WINDOW_MANAGER
+COMPOSITOR   : $COMPOSITOR
+
+NETWORK
+WIFI         : $WIFI
+IP           : $IP_ADDRESS
+
+POWER
+BATTERY      : $BATTERY
+BAT. HEALTH  : $BATTERY_HEALTH
+BACKLIGHT    : $BACKLIGHT
+PROFILE      : $POWER_PROFILE
+
+STATUS
+UPTIME       : $UPTIME
+LOAD         : $LOAD
+SHELL        : $SHELL_NAME
+EOF
+)
+
+# ----------------------------------------------------------------------
+# Openbox menu
+# ----------------------------------------------------------------------
 
 menuStart
-menuSeparator " $USER@$HOSTNAME  |   `date +'%I:%M %p, %b %d %G'`"
-menuItem "  OS         :  $distro ∙ $os ∙ $machine" 'echo'
-menuItem "  KERNEL     :  $kernel" 'echo'
-menuItem "  CPU        : $cpu" 'echo'
-menuItem "  MEMORY     :  $m_used ∙ $m_free ∙ $m_total" 'echo'
-menuItem "  SWAP       :  $s_used ∙ $s_free ∙ $s_total ∙ $swappiness" 'echo'
-menuItem "  INIT       :  $init" 'echo'
-menuItem "  BATTERY    :  $b_perc ∙ $b_stat ∙ Capacity, $b_cap" 'echo'
-menuItem "  BACKLIGHT  :  $backlight" 'echo'
-menuItem "  UPTIME     :  $uptime" 'echo'
-menuItem "  LOAD       :  $load" 'echo'
-menuItem "  WIFI       :  $interface ∙ $status ∙ $ssid" 'echo'
+
+menuSeparator "$USER_NAME@$HOST_NAME  |  $DATETIME"
+
+# Copy complete report first.
+menuItemCopyAll "$SYSINFO"
+
+# ----------------------------------------------------------------------
+# System
+# ----------------------------------------------------------------------
+
+menuSeparator "-- SYSTEM --"
+
+menuItemCopy "OS           :  $DISTRO"
+menuItemCopy "KERNEL       :  $KERNEL"
+menuItemCopy "ARCH         :  $MACHINE"
+menuItemCopy "INIT         :  $INIT"
+menuItemCopy "VIRTUAL      :  $VIRTUALIZATION"
+
+# ----------------------------------------------------------------------
+# Hardware
+# ----------------------------------------------------------------------
+
+menuSeparator "-- HARDWARE --"
+
+menuItemCopy "CPU          :  $CPU"
+menuItemCopy "CPU CORES    :  $CPU_CORES ∙ Threads $CPU_THREADS"
+menuItemCopy "CPU FREQ     :  $CPU_FREQUENCY"
+menuItemCopy "CPU DRIVER   :  $CPU_DRIVER"
+menuItemCopy "CPU GOVERNOR :  $CPU_GOVERNOR"
+
+menuItemCopy "GPU          :  $GPU"
+menuItemCopy "GPU DRIVER   :  $GPU_DRIVER"
+menuItemCopy "OPENGL       :  $OPENGL_RENDERER"
+
+menuItemCopy "MEMORY       :  $MEMORY"
+menuItemCopy "SWAP         :  $SWAP ∙ Swappiness $SWAPPINESS"
+menuItemCopy "DISK         :  $DISK"
+
+# ----------------------------------------------------------------------
+# Session
+# ----------------------------------------------------------------------
+
+menuSeparator "-- SESSION --"
+
+menuItemCopy "DISPLAY      :  $RESOLUTION"
+menuItemCopy "SESSION      :  $SESSION"
+menuItemCopy "WM           :  $WINDOW_MANAGER"
+menuItemCopy "COMPOSITOR   :  $COMPOSITOR"
+
+# ----------------------------------------------------------------------
+# Network
+# ----------------------------------------------------------------------
+
+menuSeparator "-- NETWORK --"
+
+menuItemCopy "WIFI         :  $WIFI"
+menuItemCopy "IP           :  $IP_ADDRESS"
+
+# ----------------------------------------------------------------------
+# Power
+# ----------------------------------------------------------------------
+
+menuSeparator "-- POWER --"
+
+menuItemCopy "BATTERY      :  $BATTERY"
+menuItemCopy "BAT. HEALTH  :  $BATTERY_HEALTH"
+menuItemCopy "BACKLIGHT    :  $BACKLIGHT"
+menuItemCopy "PROFILE      :  $POWER_PROFILE"
+
+# ----------------------------------------------------------------------
+# Status
+# ----------------------------------------------------------------------
+
+menuSeparator "-- STATUS --"
+
+menuItemCopy "UPTIME       :  $UPTIME"
+menuItemCopy "LOAD         :  $LOAD"
+menuItemCopy "SHELL        :  $SHELL_NAME"
+
 menuEnd

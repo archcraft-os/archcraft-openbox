@@ -14,6 +14,7 @@ fi
 # User's config dir
 dir="$HOME/.config"
 
+readonly EXEC_PICOM="$HOME/.config/openbox/scripts/ob-picom"
 readonly EXECXCOMP='picom'
 readonly RESTART_ATTEMPTS=20
 readonly HELP='
@@ -72,9 +73,10 @@ if [[ $1 = '--edit' ]]; then # Edit picom settings
 
 elif [[ $1 = '--start' ]]; then
     if ! [[ $(pidof picom) ]]; then
-        $EXECXCOMP
+        "$EXEC_PICOM"
     else
-        echo "$0 --start: picom already running" && exit 1
+        echo "$0 --start: picom already running"
+        exit 1
     fi
 
 elif [[ $1 = '--stop' ]]; then
@@ -82,10 +84,10 @@ elif [[ $1 = '--stop' ]]; then
 
 elif [[ $1 = '--restart' ]]; then
     if [[ $(pidof picom) ]]; then
-        forcekill_picom
-        "$0" --start
-    else # nothing to restart
-        echo "$0 --restart: picom is not running" && exit 1
+        "$EXEC_PICOM"
+    else
+        echo "$0 --restart: picom is not running"
+        exit 1
     fi
 
 elif [[ $1 = '--watch' ]]; then
